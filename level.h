@@ -7,7 +7,7 @@
 #include "enemy.h"
 
 
-Level* LoadLevel(Camera2D *camera);
+Level* LoadLevel();
 void UnloadLevel(Level *level);
 
 void AddProjectile(Level *level, Projectile *toAdd);

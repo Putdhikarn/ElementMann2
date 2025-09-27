@@ -25,6 +25,7 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
     temp->active = 0;
     temp->dead = 0;
 
+    temp->cSpecial = 0;
     temp->iSpeical = 0;
     temp->dSpecial = 0.0;
 
@@ -37,13 +38,16 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->respawnHp = temp->hp;
             temp->iSpeical = 1;
             break;
+        case EN_BOSSROOM_TRIGGER:
+            temp->hitBoxOffset = (Vector2){0, 0};
+            temp->hitBox = (Rectangle){temp->position.x, temp->position.y, 1, 1};
     }
 
     return temp;
 }
 
-int IsRectOnScreen(Rectangle check, Camera2D *camera){
-    Rectangle screenRect = (Rectangle){camera->target.x - camera->offset.x, camera->target.y - camera->offset.y, SCREEN_WIDTH, SCREEN_HEIGHT};
+int IsRectOnScreen(Rectangle check, Camera2D camera){
+    Rectangle screenRect = (Rectangle){camera.target.x - camera.offset.x, camera.target.y - camera.offset.y, SCREEN_WIDTH, SCREEN_HEIGHT};
     char tL = CheckCollisionPointRec((Vector2){check.x, check.y}, screenRect);
     char tR = CheckCollisionPointRec((Vector2){check.x + check.width, check.y}, screenRect);
 
@@ -53,8 +57,8 @@ int IsRectOnScreen(Rectangle check, Camera2D *camera){
     return (tL && tR && bL && bR);
 }
 
-int IsRectOnScreenPartial(Rectangle check, Camera2D *camera){
-    Rectangle screenRect = (Rectangle){camera->target.x - camera->offset.x, camera->target.y - camera->offset.y, SCREEN_WIDTH, SCREEN_HEIGHT};
+int IsRectOnScreenPartial(Rectangle check, Camera2D camera){
+    Rectangle screenRect = (Rectangle){camera.target.x - camera.offset.x, camera.target.y - camera.offset.y, SCREEN_WIDTH, SCREEN_HEIGHT};
     return CheckCollisionRecs(screenRect, check);
 }
 
@@ -113,11 +117,11 @@ void CheckCollisionWithPlayer(Enemy *enemy, Level *level){
 
 void EP0(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // spawn/Respawn enemy when on screen
-    if (IsRectOnScreen(enemy->hitBox, level->camera) && !enemy->active && !enemy->dead){
+    if (IsRectOnScreen(enemy->hitBox, level->camera->camera) && !enemy->active && !enemy->dead){
         enemy->active = 1;
     } 
     // despawn when off screen
-    else if ((!IsRectOnScreen(enemy->hitBox, level->camera) && enemy->dead) || !IsRectOnScreenPartial(enemy->hitBox, level->camera)){
+    else if ((!IsRectOnScreen(enemy->hitBox, level->camera->camera) && enemy->dead) || !IsRectOnScreenPartial(enemy->hitBox, level->camera->camera)){
         enemy->active = 0;
         enemy->dead = 0;
     } 
@@ -175,11 +179,25 @@ void ED0(Enemy *enemy){
     }
 }
 
+void EP01(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
+    if (CheckCollisionRecs(enemy->hitBox, level->player->hitBox)){
+        enemy->toBeUnload = 1;
+        level->camera->camera.target = enemy->respawnPosition;
+        level->camera->followPlayer = 0;
+    }
+}
+
+void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
+    
+}
+
 void ProcessEnemy(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     switch (enemy->type){
         case EN_WALK:
             EP0(enemy, currentMap, level, deltaTime);
             break;
+        case EN_BOSSROOM_TRIGGER:
+            EP01(enemy, currentMap, level, deltaTime);
     }
 }
 

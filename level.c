@@ -1,6 +1,6 @@
 #include "level.h"
 
-Level* LoadLevel(Camera2D *camera){
+Level* LoadLevel(){
     Level *temp = (Level *)malloc(sizeof(Level));
     for (int i = 0 ;i < sizeof(temp->projectiles) / sizeof(Projectile *); i++){
         temp->projectiles[i] = NULL;
@@ -8,7 +8,7 @@ Level* LoadLevel(Camera2D *camera){
     for (int i = 0 ;i < sizeof(temp->enemies) / sizeof(Enemy *); i++){
         temp->enemies[i] = NULL;
     }
-    temp->camera = camera;
+    temp->camera = malloc(sizeof(GameCamera));
     return temp; 
 }
 
@@ -25,6 +25,7 @@ void UnloadLevel(Level *level){
             level->enemies[i] = NULL;
         }
     }
+    free(level->camera);
     free(level);
     level = NULL;
 }

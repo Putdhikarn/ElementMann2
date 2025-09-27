@@ -9,6 +9,7 @@
 #include "enemy.h"
 #include "map.h"
 #include "player.h"
+#include "camera.h"
 #include <stdio.h>
 
 #define PIXEL_SCALE_FACTOR 3.0

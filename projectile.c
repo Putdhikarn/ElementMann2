@@ -13,7 +13,7 @@ void P0(Projectile *projectile, MapData *currentMap, Level *level, float deltaTi
     projectile->hitBox.x = projectile->position.x + projectile->hitBoxOffset.x;
     projectile->hitBox.y = projectile->position.y + projectile->hitBoxOffset.y;
 
-    Vector2 screenPos = GetWorldToScreen2D(projectile->position, *level->camera);
+    Vector2 screenPos = GetWorldToScreen2D(projectile->position, level->camera->camera);
     // Check collision with enemy
     for (int i = 0; i < sizeof(level->enemies) / sizeof(Enemy*);i++){
         if (level->enemies[i] != NULL){

@@ -2,6 +2,7 @@
 #define GAME_STRUCT_H
 
 #include "include/raylib.h"
+#include "include/raymath.h"
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -74,7 +75,9 @@ typedef struct {
 } Player;
 
 typedef enum {
-    EN_WALK
+    EN_WALK,
+    EN_BOSSROOM_TRIGGER,
+    EN_BOSS1
 } ENEMY_TYPE;
 
 typedef struct Enemy{
@@ -102,17 +105,25 @@ typedef struct Enemy{
 
     int respawnHp;
     int hp;
+    char cSpecial;
     int iSpeical;
     double dSpecial;
 
 } Enemy;
 
+typedef struct GameCamera{
+    Camera2D camera;
+    char followPlayer;
+} GameCamera;
+
 typedef struct Level{
-    Camera2D *camera;
+    GameCamera *camera;
     Projectile *projectiles[256];
     Enemy *enemies[256];
     Player* player;
 } Level;
+
+
 
 extern int G_PlayerProjCount;
 

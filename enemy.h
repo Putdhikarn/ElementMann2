@@ -5,6 +5,7 @@
 #include "game_def.h"
 #include "map.h"
 #include "player.h"
+#include "camera.h"
 
 #define MAX_ENEMY_TYPE 1
 

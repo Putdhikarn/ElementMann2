@@ -94,7 +94,8 @@ int IsTileAtPositionBlocking(MapData *mapData, float worldX, float worldY){
     int col = (int)worldX / 48;
     int row = (int)worldY / 48;
     // TraceLog(LOG_INFO, TextFormat("%d %d %d %d",col,row, *(mapData->mapData + (row * mapData->width + col)),*(mapData->mapData + (row * mapData->width + col)) > 0));
-    return *(mapData->mapData + (row * mapData->width + col)) > 0;
+    int tileId = *(mapData->mapData + (row * mapData->width + col));
+    return tileId > 0 && tileId <= 17;
 }
 
 int IsRectAtPostitionIntersectAnyTile(MapData *mapData, Rectangle rect){

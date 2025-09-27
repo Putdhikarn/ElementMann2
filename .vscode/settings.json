@@ -21,6 +21,9 @@
         "level.h": "c",
         "game_struct.h": "c",
         "control.h": "c",
-        "game_def.h": "c"
+        "game_def.h": "c",
+        "stddef.h": "c",
+        "camera.h": "c",
+        "enemy.h": "c"
     }
 }
