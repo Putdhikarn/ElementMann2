@@ -4,6 +4,7 @@ Texture enemyTextures[MAX_ENEMY_TYPE];
 
 void LoadEnemyTextures(){
     enemyTextures[EN_WALK] = LoadTexture("./data/sprites/enemy.png");
+    enemyTextures[EN_BOSS1] = LoadTexture("./data/sprites/boss1.png");
 }
 
 Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
@@ -41,6 +42,18 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
         case EN_BOSSROOM_TRIGGER:
             temp->hitBoxOffset = (Vector2){0, 0};
             temp->hitBox = (Rectangle){temp->position.x, temp->position.y, 1, 1};
+            break;
+        case EN_BOSS1:
+            temp->hitBoxOffset = (Vector2){27, 21};
+            temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
+            temp->spriteSize = 96;
+            temp->hp = 24;
+            temp->respawnHp = temp->hp;
+            temp->cSpecial = 0;
+            temp->iSpeical = 1;
+            temp->iSpeical2 = 0;
+            temp->dSpecial = 0;
+            break;
     }
 
     return temp;
@@ -128,10 +141,10 @@ void EP0(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // normal process
     else if (!enemy->dead && enemy->active){
         if (enemy->iSpeical && (!IsTileAtPositionBlocking(currentMap, enemy->hitBox.x - 2, enemy->hitBox.y + enemy->hitBox.height + 16) || 
-            IsTileAtPositionBlocking(currentMap, enemy->hitBox.x - 4, (enemy->hitBox.y + enemy->hitBox.height) / 2.0))){
+            IsTileAtPositionBlocking(currentMap, enemy->hitBox.x - 4, enemy->hitBox.y + enemy->hitBox.height / 2.0))){
                 enemy->iSpeical = 0;
         } else if (!enemy->iSpeical && (!IsTileAtPositionBlocking(currentMap, enemy->hitBox.x + enemy->hitBox.width + 2, enemy->hitBox.y + enemy->hitBox.height + 16) ||
-            IsTileAtPositionBlocking(currentMap, enemy->hitBox.x + enemy->hitBox.width + 4, (enemy->hitBox.y + enemy->hitBox.height) / 2.0))){
+            IsTileAtPositionBlocking(currentMap, enemy->hitBox.x + enemy->hitBox.width + 4, enemy->hitBox.y + enemy->hitBox.height / 2.0))){
                 enemy->iSpeical = 1;
         }
         if (enemy->iSpeical){
@@ -188,7 +201,90 @@ void EP01(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 }
 
 void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
-    
+    // spawn/Respawn enemy when on screen
+    if (IsRectOnScreen(enemy->hitBox, level->camera->camera) && !enemy->active && !enemy->dead){
+        enemy->active = 1;
+    } 
+    // despawn when off screen
+    else if ((!IsRectOnScreen(enemy->hitBox, level->camera->camera) && enemy->dead) || !IsRectOnScreenPartial(enemy->hitBox, level->camera->camera)){
+        enemy->active = 0;
+        enemy->dead = 0;
+    } 
+    // normal process
+    else if (!enemy->dead && enemy->active){
+        switch (enemy->cSpecial){
+            // walking state
+            case 0:
+                if (enemy->iSpeical && (IsTileAtPositionBlocking(currentMap, enemy->hitBox.x - 8, enemy->hitBox.y + enemy->hitBox.height / 2.0))){
+                        enemy->iSpeical = 0;
+                        enemy->cSpecial = 1;
+                } else if (!enemy->iSpeical && (IsTileAtPositionBlocking(currentMap, enemy->hitBox.x + enemy->hitBox.width + 8, enemy->hitBox.y + enemy->hitBox.height / 2.0))){
+                        enemy->iSpeical = 1;
+                        enemy->cSpecial = 1;
+                }
+                if (enemy->iSpeical){
+                    enemy->velocity.x = -560.0;
+                    enemy->facing = 0;
+                } else {
+                    enemy->velocity.x = 560.0;
+                    enemy->facing = 1;
+                }
+                if (!checkEnemyOnGround(enemy, currentMap)){
+                    enemy->velocity.y = 480.0;
+                } else {
+                    enemy->velocity.y = 0.0;
+                }
+                ApplyEnemyVelocity(enemy, currentMap, deltaTime);
+                break;
+            // Shoot
+            case 1:
+                if (enemy->dSpecial >= 0.35){
+                    enemy->dSpecial = 0;
+                    Vector2 pPos = enemy->facing == 0 ? (Vector2){enemy->position.x - 38, enemy->position.y + 32} : (Vector2){enemy->position.x + 46, enemy->position.y + 32};
+                    Vector2 pVel = enemy->facing == 0 ? (Vector2){-1330.0, 0.0} : (Vector2){1330.0, 0.0};
+                    AddProjectile(level, MakeProjectile(PROJ_BOSS1, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
+                    enemy->iSpeical2++;
+                    if (enemy->iSpeical2 >= 3){
+                        enemy->cSpecial = 0;
+                        enemy->iSpeical2 = 0;
+                    }
+                } else {
+                    enemy->dSpecial += deltaTime;
+                }
+                break;
+        }
+        // Check collision with player
+        CheckCollisionWithPlayer(enemy, level);
+        // animation stuff
+        enemy->spriteY = enemy->facing;
+        switch (enemy->cSpecial){
+            case 0:
+                 if (enemy->spriteTimer >= 0.1){
+                    enemy->spriteTimer = 0;
+                    if (enemy->spriteX == 4){
+                        enemy->spriteX = 1;
+                    } else {
+                        enemy->spriteX++;
+                    }
+                } else {
+                    enemy->spriteTimer += deltaTime;
+                }
+                break;
+            case 1:
+                enemy->spriteY += 2;
+                enemy->spriteX = 0;
+                break;
+        }
+       
+    }
+    // reinit enemy for respawn
+    else {
+        enemy->iSpeical = enemy->respawnPosition.x > level->player->position.x;
+        enemy->position = enemy->respawnPosition;
+        enemy->velocity.x = 0;
+        enemy->velocity.y = 0;
+        enemy->hp = enemy->respawnHp;
+    }
 }
 
 void ProcessEnemy(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
@@ -198,12 +294,19 @@ void ProcessEnemy(Enemy *enemy, MapData *currentMap, Level *level, float deltaTi
             break;
         case EN_BOSSROOM_TRIGGER:
             EP01(enemy, currentMap, level, deltaTime);
+            break;
+        case EN_BOSS1:
+            EP02(enemy, currentMap, level, deltaTime);
+            break;
     }
 }
 
 void DrawEnemy(Enemy *enemy){
     switch (enemy->type){
         case EN_WALK:
+            ED0(enemy);
+            break;
+        case EN_BOSS1:
             ED0(enemy);
             break;
     }

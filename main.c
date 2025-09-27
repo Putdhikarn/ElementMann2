@@ -2,7 +2,7 @@
 
 int main() {
 	
-    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
+    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI | FLAG_WINDOW_ALWAYS_RUN);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Elemant Mann2");
 

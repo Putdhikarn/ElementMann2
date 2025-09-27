@@ -3,7 +3,8 @@
 Texture projectileTextures[MAX_PROJECTILE_TYPE];
 
 void LoadProjectileTextures(){
-    projectileTextures[0] = LoadTexture("./data/sprites/player_projectile0.png");
+    projectileTextures[PROJ_PLAYER_NORMAL] = LoadTexture("./data/sprites/player_projectile0.png");
+    projectileTextures[PROJ_BOSS1] = LoadTexture("./data/sprites/boss_projectile1.png");
 }
 
 // PROJ_PLAYER_NORMAL
@@ -38,6 +39,34 @@ void D0(Projectile *projectile){
     DrawTextureRec(projectileTextures[projectile->type], (Rectangle){projectile->spriteX * projectile->spriteSize, projectile->spriteY * projectile->spriteSize, projectile->spriteSize, projectile->spriteSize}, projectile->position, WHITE);
 }
 
+//PROJ_BOSS1
+void P1(Projectile *projectile, MapData *currentMap, Level *level, float deltaTime){
+    projectile->position.x += projectile->velocity.x * deltaTime;
+    projectile->position.y += projectile->velocity.y * deltaTime;
+    projectile->hitBox.x = projectile->position.x + projectile->hitBoxOffset.x;
+    projectile->hitBox.y = projectile->position.y + projectile->hitBoxOffset.y;
+
+    Vector2 screenPos = GetWorldToScreen2D(projectile->position, level->camera->camera);
+    // Check collision with player
+
+    if (level->player != NULL){
+        if (CheckCollisionRecs(projectile->hitBox, level->player->hitBox)){
+            if (!projectile->hitSomething){
+                projectile->hitSomething = 1;
+                projectile->toBeUnload = 1;
+                DoPlayerHit(level->player, projectile->position);
+            }
+        }
+    }
+
+    // Unload projectile if offscreen
+    if (screenPos.x < -projectile->spriteSize || screenPos.x > SCREEN_WIDTH + projectile->spriteSize || screenPos.y < -projectile->spriteSize || screenPos.y > SCREEN_HEIGHT + projectile->spriteSize){
+        projectile->toBeUnload = 1;
+    }
+    
+    projectile->spriteY = projectile->facing;
+}
+
 Projectile* MakeProjectile(PROJ_TYPE type, Vector2 pos, Vector2 velocity, Vector2 hitBoxSize, Vector2 hitBoxOffset, int facing){
     Projectile *temp = (Projectile *)malloc(sizeof(Projectile));
 
@@ -63,6 +92,9 @@ Projectile* MakeProjectile(PROJ_TYPE type, Vector2 pos, Vector2 velocity, Vector
         case PROJ_PLAYER_NORMAL:
             temp->spriteSize = 72;
             break;
+        case PROJ_BOSS1:
+            temp->spriteSize = 72;
+            break;
     }
 
     return temp;
@@ -73,12 +105,15 @@ void ProcessProjectile(Projectile *projectile, MapData *currentMap, Level *level
         case PROJ_PLAYER_NORMAL:
             P0(projectile, currentMap, level, deltaTime);
             break;
+        case PROJ_BOSS1:
+            P1(projectile, currentMap, level, deltaTime);
+            break;
     }
 }
 
 void DrawProjectile(Projectile *projectile){
     switch (projectile->type){
-        case PROJ_PLAYER_NORMAL:
+        default :
             D0(projectile);
             break;
     }

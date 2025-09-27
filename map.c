@@ -91,10 +91,11 @@ void UnloadMapData(MapData *mapData){
 }
 
 int IsTileAtPositionBlocking(MapData *mapData, float worldX, float worldY){
-    int col = (int)worldX / 48;
-    int row = (int)worldY / 48;
-    // TraceLog(LOG_INFO, TextFormat("%d %d %d %d",col,row, *(mapData->mapData + (row * mapData->width + col)),*(mapData->mapData + (row * mapData->width + col)) > 0));
+    int col = (int)worldX / GAME_TILE_SIZE;
+    int row = (int)worldY / GAME_TILE_SIZE;
     int tileId = *(mapData->mapData + (row * mapData->width + col));
+    // TraceLog(LOG_INFO, TextFormat("%d", tileId));
+    // TraceLog(LOG_INFO, TextFormat("%d %d %d %d",col,row, tileId, tileId > 0 && tileId <= 17));
     return tileId > 0 && tileId <= 17;
 }
 

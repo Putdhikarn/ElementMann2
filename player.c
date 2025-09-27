@@ -17,7 +17,7 @@
 
 #define GRAVITY 3600.0
 
-#define MAX_INVIN_TIME 0.28
+#define MAX_INVIN_TIME 0.36
 
 Player* LoadPlayer(float topLeftX, float topLeftY){
     Player *player = (Player *)malloc(sizeof(Player));
@@ -34,6 +34,7 @@ Player* LoadPlayer(float topLeftX, float topLeftY){
     player->spriteLegLast = 0;
     player->spriteWalk = 0;
 
+    player->invSpriteCounter = 0;
     player->moveDelayTimer = 0.0;
     player->invincibilityTimer = 0.0;
     player->jumpTimer = 0.0;
@@ -57,7 +58,7 @@ float countDelta = 0.0;
 
 void ProcessPlayer(Player *player, MapData *currentMap, Level *currentLevel, float deltaTime){
     // TraceLog(LOG_INFO, TextFormat("*%f %f", player->velocity.x, player->velocity.y));
-    TraceLog(LOG_INFO, TextFormat("*%d %f", player->invincible, player->invincibilityTimer));
+    // TraceLog(LOG_INFO, TextFormat("*%d %f", player->invincible, player->invincibilityTimer));
     // countDelta += deltaTime;
     // count++;
     // Shoot
@@ -269,13 +270,13 @@ void AnimatePlayerSprite(Player *player, float deltaTime){
 }
 
 void DoPlayerHit(Player *player, Vector2 hitPos){
-    player->velocity.x = 0;
-    if (hitPos.x < player->position.x + 36){
-        player->velocity.x = KNOCK_BACK_FORCE;
-    } else {
-        player->velocity.x = -KNOCK_BACK_FORCE;       
-    }
     if (!player->invincible){
+        player->velocity.x = 0;
+        if (hitPos.x < player->position.x + 36){
+            player->velocity.x = KNOCK_BACK_FORCE;
+        } else {
+            player->velocity.x = -KNOCK_BACK_FORCE;       
+        }
         player->hp = player->hp;
         if (player->hp > 0){
             player->invincible = 1;
@@ -290,7 +291,13 @@ void DoPlayerHit(Player *player, Vector2 hitPos){
 void DrawPlayer(Player *player){
     Rectangle drawRect = (Rectangle){player->spirteX * 72, player->spirteY * 72, 72, 72};
     // TraceLog(LOG_INFO, TextFormat("*%u", &player->spritesNormal));
-    DrawTextureRec(player->spritesNormal, drawRect, player->position, WHITE);
+    if (player->invincible && player->invSpriteCounter){
+        DrawTextureRec(player->spritesNormalInvincible, drawRect, player->position, WHITE);
+        player->invSpriteCounter = 0;
+    } else {
+        DrawTextureRec(player->spritesNormal, drawRect, player->position, WHITE);
+        player->invSpriteCounter++;
+    }
     // DrawTextureV(player->spritesNormal, player->position, WHITE);
 }
 

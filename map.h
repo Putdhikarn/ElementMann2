@@ -2,6 +2,7 @@
 #define MAP_H
 
 #include "tileset.h"
+#include "game_def.h"
 #include "game_struct.h"
 #include <string.h>
 #include <ctype.h>

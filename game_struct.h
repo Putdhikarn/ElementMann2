@@ -17,7 +17,8 @@ typedef struct {
 } MapData;
 
 typedef enum {
-    PROJ_PLAYER_NORMAL
+    PROJ_PLAYER_NORMAL,
+    PROJ_BOSS1
 } PROJ_TYPE;
 
 typedef struct Projectile{
@@ -58,6 +59,7 @@ typedef struct {
     float shootTimer;
     float shootSpriteTimer;
     int shootSprite;
+    char invSpriteCounter;
 
     float spriteTimer;
     int spriteLeg;
@@ -107,6 +109,7 @@ typedef struct Enemy{
     int hp;
     char cSpecial;
     int iSpeical;
+    int iSpeical2;
     double dSpecial;
 
 } Enemy;

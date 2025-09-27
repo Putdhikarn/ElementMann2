@@ -11,7 +11,7 @@ Level *currentLevel;
 // Init the Game
 void GameInit(){
     G_PlayerProjCount = 0;
-    player = LoadPlayer(17 * GAME_TILE_SIZE, 10 * GAME_TILE_SIZE);
+    player = LoadPlayer(17 * GAME_TILE_SIZE, 9 * GAME_TILE_SIZE);
 
     testMap = LoadMapDataFromFile("./data/mapdata/map1.emp");
     SetMapTileSet("./data/tilesets/map1.png", testMap, 48);
@@ -35,9 +35,10 @@ void GameInit(){
     currentLevel->camera->camera.target = player->position;
     currentLevel->camera->followPlayer = 1;
 
-    AddEnemy(currentLevel, MakeEnemy(EN_WALK, (Vector2){20 * GAME_TILE_SIZE, 10 * GAME_TILE_SIZE}));
+    // AddEnemy(currentLevel, MakeEnemy(EN_WALK, (Vector2){20 * GAME_TILE_SIZE, 10 * GAME_TILE_SIZE}));
+    AddEnemy(currentLevel, MakeEnemy(EN_BOSS1, (Vector2){38 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
     Enemy *bossTrigger = MakeEnemy(EN_BOSSROOM_TRIGGER, (Vector2){17 * GAME_TILE_SIZE, 36 * GAME_TILE_SIZE});
-    bossTrigger->respawnPosition = (Vector2){28.5 * GAME_TILE_SIZE, 33 * GAME_TILE_SIZE};
+    bossTrigger->respawnPosition = (Vector2){29 * GAME_TILE_SIZE, 33 * GAME_TILE_SIZE};
     bossTrigger->hitBox = (Rectangle){bossTrigger->position.x, bossTrigger->position.y, 23 * GAME_TILE_SIZE, 3 * GAME_TILE_SIZE};
     AddEnemy(currentLevel, bossTrigger);
     bossTrigger = NULL;
@@ -56,7 +57,7 @@ void GameLoop(){
     if (currentLevel->camera->followPlayer){
         // currentLevel->camera->camera.target.x = player->position.x;
         // currentLevel->camera->camera.target.y = player->position.y;
-        InterpolateCameraToPos(currentLevel->camera, player->position, 16.0, deltaTime);
+        InterpolateCameraToPos(currentLevel->camera, (Vector2){player->position.x + 36, player->position.y + 36}, 16.0, deltaTime);
     }
     // Draw Stuff Down Here...
     // Draw Worldspace Stuff
