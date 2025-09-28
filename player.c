@@ -17,7 +17,7 @@
 
 #define GRAVITY 3600.0
 
-#define MAX_INVIN_TIME 0.36
+#define MAX_INVIN_TIME 0.46
 
 Player* LoadPlayer(float topLeftX, float topLeftY){
     Player *player = (Player *)malloc(sizeof(Player));
@@ -291,7 +291,7 @@ void DoPlayerHit(Player *player, Vector2 hitPos){
 void DrawPlayer(Player *player){
     Rectangle drawRect = (Rectangle){player->spirteX * 72, player->spirteY * 72, 72, 72};
     // TraceLog(LOG_INFO, TextFormat("*%u", &player->spritesNormal));
-    if (player->invincible && player->invSpriteCounter){
+    if (player->invincible && (int)(player->invincibilityTimer * 100000) % 2 == 0){
         DrawTextureRec(player->spritesNormalInvincible, drawRect, player->position, WHITE);
         player->invSpriteCounter = 0;
     } else {

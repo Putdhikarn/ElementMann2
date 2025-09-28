@@ -52,7 +52,7 @@ void P1(Projectile *projectile, MapData *currentMap, Level *level, float deltaTi
 
     if (level->player != NULL){
         if (CheckCollisionRecs(projectile->hitBox, level->player->hitBox)){
-            if (!projectile->hitSomething){
+            if (!projectile->hitSomething && !level->player->invincible){
                 projectile->hitSomething = 1;
                 projectile->toBeUnload = 1;
                 DoPlayerHit(level->player, (Vector2){projectile->hitBox.x + projectile->hitBox.width / 2, projectile->hitBox.y + projectile->hitBox.height / 2});
@@ -80,7 +80,7 @@ void P2(Projectile *projectile, MapData *currentMap, Level *level, float deltaTi
 
     if (level->player != NULL){
         if (CheckCollisionRecs(projectile->hitBox, level->player->hitBox)){
-            if (!projectile->hitSomething){
+            if (!projectile->hitSomething && !level->player->invincible){
                 projectile->hitSomething = 1;
                 projectile->toBeUnload = 1;
                 DoPlayerHit(level->player, (Vector2){projectile->hitBox.x + projectile->hitBox.width / 2, projectile->hitBox.y + projectile->hitBox.height / 2});

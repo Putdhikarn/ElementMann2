@@ -102,6 +102,9 @@ typedef struct Enemy{
     int spriteXLast;
     int spriteY;
 
+    char invincible;
+    float invTimer;
+
     char respawnable;
     char active;
     char dead;

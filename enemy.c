@@ -1,5 +1,7 @@
 #include "enemy.h"
 
+#define ENEMY_INV_TIME_MAX 0.35 
+
 Texture enemyTextures[MAX_ENEMY_TYPE];
 
 void LoadEnemyTextures(){
@@ -21,6 +23,9 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
     temp->spriteX = 0;
     temp->spriteXLast = 0;
     temp->spriteY = 0;
+
+    temp->invincible = 0;
+    temp->invTimer = 0;
 
     temp->respawnable = 1;
     temp->active = 0;
@@ -114,22 +119,38 @@ void ApplyEnemyVelocity(Enemy *enemy, MapData *currentMap, float deltaTime){
 }
 
 void DoEnemyHit(Enemy *enemy, Vector2 hitPos, int elementType){
-    enemy->hp--;
-    if (enemy->hp <= 0){
-        if (!enemy->respawnable){
-            enemy->toBeUnload = 1;
+    if (enemy->invincible == 0){
+        enemy->invincible = 1;
+        enemy->invTimer = 0.0;
+        enemy->hp--;
+        if (enemy->hp <= 0){
+            if (!enemy->respawnable){
+                enemy->toBeUnload = 1;
+            }
+            enemy->dead = 1;
         }
-        enemy->dead = 1;
+    }
+}
+
+void DoEnemyInvCheck(Enemy *enemy, float deltaTime){
+    if (enemy->invincible == 1){
+        if (enemy->invTimer >= ENEMY_INV_TIME_MAX){
+            enemy->invincible = 0;
+        } else {
+            enemy->invTimer += deltaTime;
+        }
     }
 }
 
 void CheckCollisionWithPlayer(Enemy *enemy, Level *level){
-    if (CheckCollisionRecs(enemy->hitBox, level->player->hitBox)){
+    if (CheckCollisionRecs(enemy->hitBox, level->player->hitBox) && !level->player->invincible){
         DoPlayerHit(level->player, (Vector2){enemy->hitBox.x + (enemy->hitBox.width / 2), enemy->hitBox.y});
     }
 }
 
 void EP0(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
+    // invincibility check
+    DoEnemyInvCheck(enemy, deltaTime);
     // spawn/Respawn enemy when on screen
     if (IsRectOnScreen(enemy->hitBox, level->camera->camera) && !enemy->active && !enemy->dead){
         enemy->active = 1;
@@ -183,6 +204,8 @@ void EP0(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
         enemy->position = enemy->respawnPosition;
         enemy->velocity.x = 0;
         enemy->velocity.y = 0;
+        enemy->invincible = 0;
+        enemy->invTimer = 0.0;
         enemy->hp = enemy->respawnHp;
     }
 }
@@ -190,6 +213,18 @@ void EP0(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 void ED0(Enemy *enemy){
     if (!enemy->dead && enemy->active){
         DrawTextureRec(enemyTextures[enemy->type], (Rectangle){enemy->spriteX * enemy->spriteSize, enemy->spriteY * enemy->spriteSize, enemy->spriteSize, enemy->spriteSize}, enemy->position, WHITE);
+    }
+}
+
+void ED02(Enemy *enemy){
+    if (!enemy->dead && enemy->active){
+        if (enemy->invincible){
+            if (((int)(enemy->invTimer * 100000) % 2 == 0)){
+                DrawTextureRec(enemyTextures[enemy->type], (Rectangle){enemy->spriteX * enemy->spriteSize, enemy->spriteY * enemy->spriteSize, enemy->spriteSize, enemy->spriteSize}, enemy->position, WHITE);
+            }
+        } else {
+            DrawTextureRec(enemyTextures[enemy->type], (Rectangle){enemy->spriteX * enemy->spriteSize, enemy->spriteY * enemy->spriteSize, enemy->spriteSize, enemy->spriteSize}, enemy->position, WHITE);
+        }
     }
 }
 
@@ -202,6 +237,8 @@ void EP01(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 }
 
 void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
+    // invincibility check
+    DoEnemyInvCheck(enemy, deltaTime);
     // spawn/Respawn enemy when on screen
     if (IsRectOnScreen(enemy->hitBox, level->camera->camera) && !enemy->active && !enemy->dead){
         enemy->active = 1;
@@ -219,7 +256,7 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
             case 0:
                 if (enemy->iSpeical && (IsTileAtPositionBlocking(currentMap, enemy->hitBox.x - 8, enemy->hitBox.y + enemy->hitBox.height / 2.0))){
                         enemy->iSpeical = 0;
-                        if (enemy->hp / enemy->respawnHp < 0.55 && attackRng % 2 == 0){
+                        if ((float)enemy->hp / (float)enemy->respawnHp < 0.55 && attackRng % 2 == 0){
                             enemy->cSpecial = 2;
                             enemy->velocity.y = -1200;
                             ApplyEnemyVelocity(enemy, currentMap, deltaTime);
@@ -230,7 +267,7 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
                         enemy->cSpecial = 1;
                 } else if (!enemy->iSpeical && (IsTileAtPositionBlocking(currentMap, enemy->hitBox.x + enemy->hitBox.width + 8, enemy->hitBox.y + enemy->hitBox.height / 2.0))){
                         enemy->iSpeical = 1;
-                        if (enemy->hp / enemy->respawnHp < 0.55 && attackRng % 2 == 0){
+                        if ((float)enemy->hp / (float)enemy->respawnHp < 0.55 && attackRng % 2 == 0){
                             enemy->cSpecial = 2;
                             enemy->velocity.y = -1200;
                             ApplyEnemyVelocity(enemy, currentMap, deltaTime);
@@ -262,12 +299,15 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
                     AddProjectile(level, MakeProjectile(PROJ_BOSS1, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
                     enemy->iSpeical2++;
                     if (enemy->iSpeical2 >= 3){
-                        if (enemy->hp / enemy->respawnHp < 0.55 && attackRng % 2 == 0){
+                        enemy->iSpeical2 = 0;
+                        if ((float)enemy->hp / (float)enemy->respawnHp < 0.55 && attackRng % 2 == 0){
                             enemy->cSpecial = 2;
+                            enemy->velocity.y = -1200;
+                            ApplyEnemyVelocity(enemy, currentMap, deltaTime);
+                            break;
                         } else {
                             enemy->cSpecial = 0;
                         }
-                        enemy->iSpeical2 = 0;
                     }
                 } else {
                     enemy->dSpecial += deltaTime;
@@ -344,6 +384,8 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
         enemy->position = enemy->respawnPosition;
         enemy->velocity.x = 0;
         enemy->velocity.y = 0;
+        enemy->invincible = 0;
+        enemy->invTimer = 0.0;
         enemy->hp = enemy->respawnHp;
     }
 }
@@ -364,10 +406,10 @@ void ProcessEnemy(Enemy *enemy, MapData *currentMap, Level *level, float deltaTi
 
 void DrawEnemy(Enemy *enemy){
     switch (enemy->type){
-        case EN_WALK:
-            ED0(enemy);
-            break;
         case EN_BOSS1:
+            ED02(enemy);
+            break;
+        default :
             ED0(enemy);
             break;
     }
