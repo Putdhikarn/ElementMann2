@@ -18,7 +18,8 @@ typedef struct {
 
 typedef enum {
     PROJ_PLAYER_NORMAL,
-    PROJ_BOSS1
+    PROJ_BOSS1,
+    PROJ_BOSS1_2
 } PROJ_TYPE;
 
 typedef struct Projectile{
@@ -108,6 +109,7 @@ typedef struct Enemy{
     int respawnHp;
     int hp;
     char cSpecial;
+    char cSpecial2;
     int iSpeical;
     int iSpeical2;
     double dSpecial;

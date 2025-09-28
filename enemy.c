@@ -38,6 +38,7 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->hp = 1;
             temp->respawnHp = temp->hp;
             temp->iSpeical = 1;
+            temp->cSpecial2 = 0;
             break;
         case EN_BOSSROOM_TRIGGER:
             temp->hitBoxOffset = (Vector2){0, 0};
@@ -212,15 +213,31 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     } 
     // normal process
     else if (!enemy->dead && enemy->active){
+        int attackRng = GetRandomValue(0, 256);
         switch (enemy->cSpecial){
             // walking state
             case 0:
                 if (enemy->iSpeical && (IsTileAtPositionBlocking(currentMap, enemy->hitBox.x - 8, enemy->hitBox.y + enemy->hitBox.height / 2.0))){
                         enemy->iSpeical = 0;
+                        if (enemy->hp / enemy->respawnHp < 0.55 && attackRng % 2 == 0){
+                            enemy->cSpecial = 2;
+                            enemy->velocity.y = -1200;
+                            ApplyEnemyVelocity(enemy, currentMap, deltaTime);
+                            break;
+                        } else {
+                            enemy->cSpecial = 1;
+                        }
                         enemy->cSpecial = 1;
                 } else if (!enemy->iSpeical && (IsTileAtPositionBlocking(currentMap, enemy->hitBox.x + enemy->hitBox.width + 8, enemy->hitBox.y + enemy->hitBox.height / 2.0))){
                         enemy->iSpeical = 1;
-                        enemy->cSpecial = 1;
+                        if (enemy->hp / enemy->respawnHp < 0.55 && attackRng % 2 == 0){
+                            enemy->cSpecial = 2;
+                            enemy->velocity.y = -1200;
+                            ApplyEnemyVelocity(enemy, currentMap, deltaTime);
+                            break;
+                        } else {
+                            enemy->cSpecial = 1;
+                        }
                 }
                 if (enemy->iSpeical){
                     enemy->velocity.x = -560.0;
@@ -236,7 +253,7 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
                 }
                 ApplyEnemyVelocity(enemy, currentMap, deltaTime);
                 break;
-            // Shoot
+            // shoot state
             case 1:
                 if (enemy->dSpecial >= 0.35){
                     enemy->dSpecial = 0;
@@ -245,8 +262,50 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
                     AddProjectile(level, MakeProjectile(PROJ_BOSS1, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
                     enemy->iSpeical2++;
                     if (enemy->iSpeical2 >= 3){
-                        enemy->cSpecial = 0;
+                        if (enemy->hp / enemy->respawnHp < 0.55 && attackRng % 2 == 0){
+                            enemy->cSpecial = 2;
+                        } else {
+                            enemy->cSpecial = 0;
+                        }
                         enemy->iSpeical2 = 0;
+                    }
+                } else {
+                    enemy->dSpecial += deltaTime;
+                }
+                break;
+            // jump to middle state
+            case 2:
+                if (enemy->iSpeical){
+                    enemy->velocity.x = -560.0;
+                    enemy->facing = 0;
+                } else {
+                    enemy->velocity.x = 560.0;
+                    enemy->facing = 1;
+                }
+                if (!checkEnemyOnGround(enemy, currentMap)){
+                    if (enemy->velocity.y < 0){
+                        enemy->velocity.y += 2400.0 * deltaTime;
+                    } else {
+                        enemy->velocity.y += 3600.0 * deltaTime;
+                    }
+                } else {
+                    enemy->cSpecial = 3;
+                    enemy->spriteX = 0;
+                    enemy->velocity.y = 0.0;
+                }
+                ApplyEnemyVelocity(enemy, currentMap, deltaTime);
+                break;
+            // shoot circle state
+            case 3:
+                if (enemy->dSpecial >= 0.25){
+                    enemy->dSpecial = 0;
+                    for (int i = 0; i <= 180; i += 36){
+                        Vector2 pDir = (Vector2){cos((double)i * (PI / 180.0)), sin((double)i * (PI / 180.0))};
+                        Vector2 pPos = (Vector2){enemy->hitBox.x + enemy->hitBox.width / 2, enemy->hitBox.y + enemy->hitBox.height / 2};
+                        Vector2 pVel = (Vector2){1330.0, -1330.0};
+                        pVel = Vector2Multiply(pVel, Vector2Normalize(pDir));
+                        AddProjectile(level, MakeProjectile(PROJ_BOSS1_2, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
+                        enemy->cSpecial = 0;
                     }
                 } else {
                     enemy->dSpecial += deltaTime;
@@ -274,6 +333,8 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
                 enemy->spriteY += 2;
                 enemy->spriteX = 0;
                 break;
+            case 2:
+                enemy->spriteX = 5;
         }
        
     }

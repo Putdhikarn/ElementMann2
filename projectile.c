@@ -5,6 +5,7 @@ Texture projectileTextures[MAX_PROJECTILE_TYPE];
 void LoadProjectileTextures(){
     projectileTextures[PROJ_PLAYER_NORMAL] = LoadTexture("./data/sprites/player_projectile0.png");
     projectileTextures[PROJ_BOSS1] = LoadTexture("./data/sprites/boss_projectile1.png");
+    projectileTextures[PROJ_BOSS1_2] = LoadTexture("./data/sprites/boss_projectile2.png");
 }
 
 // PROJ_PLAYER_NORMAL
@@ -54,7 +55,7 @@ void P1(Projectile *projectile, MapData *currentMap, Level *level, float deltaTi
             if (!projectile->hitSomething){
                 projectile->hitSomething = 1;
                 projectile->toBeUnload = 1;
-                DoPlayerHit(level->player, projectile->position);
+                DoPlayerHit(level->player, (Vector2){projectile->hitBox.x + projectile->hitBox.width / 2, projectile->hitBox.y + projectile->hitBox.height / 2});
             }
         }
     }
@@ -65,6 +66,32 @@ void P1(Projectile *projectile, MapData *currentMap, Level *level, float deltaTi
     }
     
     projectile->spriteY = projectile->facing;
+}
+
+//PROJ_BOSS1_2
+void P2(Projectile *projectile, MapData *currentMap, Level *level, float deltaTime){
+    projectile->position.x += projectile->velocity.x * deltaTime;
+    projectile->position.y += projectile->velocity.y * deltaTime;
+    projectile->hitBox.x = projectile->position.x + projectile->hitBoxOffset.x;
+    projectile->hitBox.y = projectile->position.y + projectile->hitBoxOffset.y;
+
+    Vector2 screenPos = GetWorldToScreen2D(projectile->position, level->camera->camera);
+    // Check collision with player
+
+    if (level->player != NULL){
+        if (CheckCollisionRecs(projectile->hitBox, level->player->hitBox)){
+            if (!projectile->hitSomething){
+                projectile->hitSomething = 1;
+                projectile->toBeUnload = 1;
+                DoPlayerHit(level->player, (Vector2){projectile->hitBox.x + projectile->hitBox.width / 2, projectile->hitBox.y + projectile->hitBox.height / 2});
+            }
+        }
+    }
+
+    // Unload projectile if offscreen
+    if (screenPos.x < -projectile->spriteSize || screenPos.x > SCREEN_WIDTH + projectile->spriteSize || screenPos.y < -projectile->spriteSize || screenPos.y > SCREEN_HEIGHT + projectile->spriteSize){
+        projectile->toBeUnload = 1;
+    }
 }
 
 Projectile* MakeProjectile(PROJ_TYPE type, Vector2 pos, Vector2 velocity, Vector2 hitBoxSize, Vector2 hitBoxOffset, int facing){
@@ -95,6 +122,9 @@ Projectile* MakeProjectile(PROJ_TYPE type, Vector2 pos, Vector2 velocity, Vector
         case PROJ_BOSS1:
             temp->spriteSize = 72;
             break;
+        case PROJ_BOSS1_2:
+            temp->spriteSize = 72;
+            break;
     }
 
     return temp;
@@ -107,6 +137,9 @@ void ProcessProjectile(Projectile *projectile, MapData *currentMap, Level *level
             break;
         case PROJ_BOSS1:
             P1(projectile, currentMap, level, deltaTime);
+            break;
+        case PROJ_BOSS1_2:
+            P2(projectile, currentMap, level, deltaTime);
             break;
     }
 }

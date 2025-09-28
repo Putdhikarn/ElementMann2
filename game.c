@@ -10,6 +10,7 @@ Level *currentLevel;
 
 // Init the Game
 void GameInit(){
+    SetRandomSeed(451);
     G_PlayerProjCount = 0;
     player = LoadPlayer(17 * GAME_TILE_SIZE, 9 * GAME_TILE_SIZE);
 
