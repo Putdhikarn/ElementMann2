@@ -4,6 +4,8 @@ Player *player;
 MapData *testMap;
 // Camera2D camera;
 
+Texture2D playerHpBar;
+
 float deltaTime;
 
 Level *currentLevel;
@@ -43,6 +45,8 @@ void GameInit(){
     bossTrigger->hitBox = (Rectangle){bossTrigger->position.x, bossTrigger->position.y, 23 * GAME_TILE_SIZE, 3 * GAME_TILE_SIZE};
     AddEnemy(currentLevel, bossTrigger);
     bossTrigger = NULL;
+
+    playerHpBar = LoadTexture("./data/sprites/normal_bar.png");
 }
 
 void GameLoop(){
@@ -81,6 +85,7 @@ void GameLoop(){
     DrawLevelProjectile(currentLevel);
     EndMode2D();
     // Draw Screenspace Stuff
+    DrawTextureRec(playerHpBar, (Rectangle){0, 0, player->hp * 18, 48}, (Vector2){GAME_TILE_SIZE, GAME_TILE_SIZE}, WHITE);
 	DrawText("It works!", 20, 20, 20, WHITE);
     DrawFPS(1000, 100);
 	DrawText(TextFormat("%f", deltaTime), 100, 100, 20, WHITE);
@@ -92,6 +97,7 @@ void GameCleanUp(){
     UnloadPlayer(player);
     UnloadProjectileTextures();
     UnloadEnemyTextures();
+    UnloadTexture(playerHpBar);
     UnloadLevel(currentLevel);
     // UnloadMapData(testMap);
 }

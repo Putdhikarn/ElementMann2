@@ -277,10 +277,11 @@ void DoPlayerHit(Player *player, Vector2 hitPos){
         } else {
             player->velocity.x = -KNOCK_BACK_FORCE;       
         }
-        player->hp = player->hp;
+        player->hp--;
         if (player->hp > 0){
             player->invincible = 1;
         } else {
+            player->hp = 8;
             if(player->alive){
                 player->alive = 0;
             }
