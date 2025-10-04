@@ -12,14 +12,15 @@ Level *currentLevel;
 
 // Init the Game
 void GameInit(){
+    LoadAudio();
     LoadMainMenu();
     LoadLevelSelect();
     SetRandomSeed(451);
     G_PlayerProjCount = 0;
-    player = LoadPlayer(17 * GAME_TILE_SIZE, 9 * GAME_TILE_SIZE);
+    player = LoadPlayer(17 * GAME_TILE_SIZE, 12 * GAME_TILE_SIZE);
 
-    testMap = LoadMapDataFromFile("./data/mapdata/map1.emp");
-    SetMapTileSet("./data/tilesets/map1.png", testMap, 48);
+    testMap = LoadMapDataFromFile("data/mapdata/map1.emp");
+    SetMapTileSet("data/tilesets/map1.png", testMap, 48);
 
     LoadProjectileTextures();
     LoadEnemyTextures();
@@ -48,7 +49,8 @@ void GameInit(){
     AddEnemy(currentLevel, bossTrigger);
     bossTrigger = NULL;
 
-    playerHpBar = LoadTexture("./data/sprites/normal_bar.png");
+    playerHpBar = LoadTexture("data/sprites/normal_bar.png");
+    PlayBGM(BGM_MAIN);
 }
 
 void GameLoop(){
@@ -57,6 +59,7 @@ void GameLoop(){
     // Unload Stuff that needs to be unloaded Down Here...
     CleanUpProjectile(currentLevel);
     // Process Logic Down Here...
+    ProcessAudioUpdate();
     deltaTime = GetFrameTime();
     switch (currentGameState)
     {
@@ -131,5 +134,6 @@ void GameCleanUp(){
     UnloadEnemyTextures();
     UnloadTexture(playerHpBar);
     UnloadLevel(currentLevel);
+    UnloadAudio();
     // UnloadMapData(testMap);
 }

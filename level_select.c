@@ -16,17 +16,17 @@ Texture levelIcon4G;
 // Texture dummy2; // another dummy to fix the bug
 
 void LoadLevelSelect(){
-    levelSelectText = LoadTexture("./data/sprites/level_select.png");
-    levelSelectCursor = LoadTexture("./data/sprites/select_cursor.png");
+    levelSelectText = LoadTexture("data/sprites/level_select.png");
+    levelSelectCursor = LoadTexture("data/sprites/select_cursor.png");
 
-    levelIcon1 = LoadTexture("./data/sprites/stage1.png");
-    levelIcon1G = LoadTexture("./data/sprites/stage1g.png");
-    levelIcon2 = LoadTexture("./data/sprites/stage1.png");
-    levelIcon2G = LoadTexture("./data/sprites/stage1g.png");
-    levelIcon3 = LoadTexture("./data/sprites/stage1.png");
-    levelIcon3G = LoadTexture("./data/sprites/stage1g.png");
-    levelIcon4 = LoadTexture("./data/sprites/stage1.png");
-    levelIcon4G = LoadTexture("./data/sprites/stage1g.png");
+    levelIcon1 = LoadTexture("data/sprites/stage1.png");
+    levelIcon1G = LoadTexture("data/sprites/stage1g.png");
+    levelIcon2 = LoadTexture("data/sprites/stage1.png");
+    levelIcon2G = LoadTexture("data/sprites/stage1g.png");
+    levelIcon3 = LoadTexture("data/sprites/stage1.png");
+    levelIcon3G = LoadTexture("data/sprites/stage1g.png");
+    levelIcon4 = LoadTexture("data/sprites/stage1.png");
+    levelIcon4G = LoadTexture("data/sprites/stage1g.png");
 }
 
 void UnloadLevelSelect(){
@@ -46,18 +46,23 @@ void UnloadLevelSelect(){
 void ProcessLevelSelect(){
     if (IsKeyPressed(CONTROL_UP)){
         selectCursorY = 1;
+        PlaySFX(SFX_CURSOR);
     } else if (IsKeyPressed(CONTROL_DOWN)){
         selectCursorY = 0;
+        PlaySFX(SFX_CURSOR);
     } else if (IsKeyPressed(CONTROL_LEFT)){
         if (selectCursorX > 0){
             selectCursorX--;
+            PlaySFX(SFX_CURSOR);
         }
     } else if (IsKeyPressed(CONTROL_RIGHT)){
         if (selectCursorX < 2){
             selectCursorX++;
+            PlaySFX(SFX_CURSOR);
         }
     } else if (IsKeyPressed(CONTROL_CANCEL)){
         currentGameState = GAME_STATE_LEVEL;
+        PlaySFX(SFX_CURSOR);
     }
 }
 

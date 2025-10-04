@@ -26,6 +26,7 @@
         "camera.h": "c",
         "enemy.h": "c",
         "main_menu.h": "c",
-        "level_select.h": "c"
+        "level_select.h": "c",
+        "audio.h": "c"
     }
 }

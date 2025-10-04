@@ -24,10 +24,11 @@
 
 Player* LoadPlayer(float topLeftX, float topLeftY){
     Player *player = (Player *)malloc(sizeof(Player));
-    player->spritesNormal = LoadTexture("./data/sprites/player.png");
-    player->spritesNormalInvincible = LoadTexture("./data/sprites/player_inv.png");
+    player->spritesNormal = LoadTexture("data/sprites/player.png");
+    player->spritesNormalInvincible = LoadTexture("data/sprites/player_inv.png");
 
     player->position = (Vector2){topLeftX, topLeftY};
+    player->velocity = (Vector2){0.0, 0.0};
     player->respawnPosition = player->position;
     player->hitBox = (Rectangle){topLeftX + 12, topLeftY + 6, 51, 63};
 
@@ -41,6 +42,7 @@ Player* LoadPlayer(float topLeftX, float topLeftY){
     player->invSpriteCounter = 0;
     player->moveDelayTimer = 0.0;
     player->invincibilityTimer = 0.0;
+    player->respawnTimer = 0.0;
     player->jumpTimer = 0.0;
 
     player->shootTimer = 0.0;
@@ -63,6 +65,7 @@ float countDelta = 0.0;
 void ProcessPlayer(Player *player, MapData *currentMap, Level *currentLevel, float deltaTime){
     // TraceLog(LOG_INFO, TextFormat("*%f %f", player->velocity.x, player->velocity.y));
     // TraceLog(LOG_INFO, TextFormat("*%d %f", player->invincible, player->invincibilityTimer));
+    // TraceLog(LOG_INFO, TextFormat("*%f %d", player->respawnTimer, currentLevel->camera->followPlayer));
     // countDelta += deltaTime;
     // count++;
     // Shoot
@@ -77,6 +80,7 @@ void ProcessPlayer(Player *player, MapData *currentMap, Level *currentLevel, flo
                 Vector2 pVel = player->facing == 0 ? (Vector2){-1440.0, 0.0} : (Vector2){1440.0, 0.0};
 
                 AddProjectile(currentLevel, MakeProjectile(PROJ_PLAYER_NORMAL, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, player->facing));
+                PlaySFX(SFX_ATTACK);
             }
         }
         // Jump
@@ -89,6 +93,7 @@ void ProcessPlayer(Player *player, MapData *currentMap, Level *currentLevel, flo
                 player->velocity.y -= JUMP_FORCE_ACCEL * deltaTime;
                 player->jumpTimer += deltaTime;
             }
+            PlaySFX(SFX_JUMP);
         }
         // Movement
         if (IsKeyDown(CONTROL_RIGHT) && !(player->invincible && player->invincibilityTimer < MAX_INVIN_TIME)){
@@ -317,6 +322,7 @@ void DoPlayerHit(Player *player, Vector2 hitPos){
             if(player->alive){
                 player->alive = 0;
             }
+            PlaySFX(SFX_PLAYER_DEAD);
         }
     }
 }

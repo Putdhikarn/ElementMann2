@@ -5,8 +5,8 @@
 Texture enemyTextures[MAX_ENEMY_TYPE];
 
 void LoadEnemyTextures(){
-    enemyTextures[EN_WALK] = LoadTexture("./data/sprites/enemy.png");
-    enemyTextures[EN_BOSS1] = LoadTexture("./data/sprites/boss1.png");
+    enemyTextures[EN_WALK] = LoadTexture("data/sprites/enemy.png");
+    enemyTextures[EN_BOSS1] = LoadTexture("data/sprites/boss1.png");
 }
 
 Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
@@ -234,7 +234,7 @@ void EP01(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
         level->camera->camera.target = enemy->respawnPosition;
         level->camera->followPlayer = 0;
         enemy->cSpecial = 1;
-    } else {
+    } else if (!CheckCollisionRecs(enemy->hitBox, level->player->hitBox)){
         enemy->cSpecial = 0;
     }
 }

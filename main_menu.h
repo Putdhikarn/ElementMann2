@@ -3,6 +3,7 @@
 
 #include "game_struct.h"
 #include "game_def.h"
+#include "audio.h"
 #include "control.h"
 
 void LoadMainMenu();

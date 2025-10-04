@@ -3,9 +3,9 @@
 Texture projectileTextures[MAX_PROJECTILE_TYPE];
 
 void LoadProjectileTextures(){
-    projectileTextures[PROJ_PLAYER_NORMAL] = LoadTexture("./data/sprites/player_projectile0.png");
-    projectileTextures[PROJ_BOSS1] = LoadTexture("./data/sprites/boss_projectile1.png");
-    projectileTextures[PROJ_BOSS1_2] = LoadTexture("./data/sprites/boss_projectile2.png");
+    projectileTextures[PROJ_PLAYER_NORMAL] = LoadTexture("data/sprites/player_projectile0.png");
+    projectileTextures[PROJ_BOSS1] = LoadTexture("data/sprites/boss_projectile1.png");
+    projectileTextures[PROJ_BOSS1_2] = LoadTexture("data/sprites/boss_projectile2.png");
 }
 
 // PROJ_PLAYER_NORMAL

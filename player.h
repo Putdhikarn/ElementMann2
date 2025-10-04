@@ -9,6 +9,7 @@
 #include "control.h"
 #include "game_def.h"
 #include "game_struct.h"
+#include "audio.h"
 #include <stdlib.h>
 
 Player* LoadPlayer(float topLeftX, float topLeftY);

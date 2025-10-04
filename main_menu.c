@@ -10,11 +10,11 @@ Texture startText;
 Texture dummyTextureThatSomehowfixTheTextureStrechingBug;
 
 void LoadMainMenu(){
-    title = LoadTexture("./data/sprites/title.png");
-    //titleBG = LoadTexture("./data/sprites/title.png");
-    cursor = LoadTexture("./data/sprites/cursor.png");
-    passwordText = LoadTexture("./data/sprites/password_text2.png");
-    startText = LoadTexture("./data/sprites/start_text.png");
+    title = LoadTexture("data/sprites/title.png");
+    //titleBG = LoadTexture("data/sprites/title.png");
+    cursor = LoadTexture("data/sprites/cursor.png");
+    passwordText = LoadTexture("data/sprites/password_text2.png");
+    startText = LoadTexture("data/sprites/start_text.png");
 }
 
 void UnloadMainMenu(){
@@ -29,14 +29,20 @@ void ProcessMainMenu(){
     if (IsKeyPressed(CONTROL_CANCEL)){
         if (mainMenuCursorPos == 1){
             currentGameState = GAME_STATE_PASSWORD;
+            PlaySFX(SFX_CURSOR);
+            StopBGM();
         } else {
             currentGameState = GAME_STATE_LEVEL_SELECT;
+            PlaySFX(SFX_CURSOR);
+            StopBGM();
         }
     }
-    if (IsKeyPressed(CONTROL_UP)){
+    if (IsKeyPressed(CONTROL_UP) && mainMenuCursorPos != 0){
         mainMenuCursorPos = 0;
-    } else if (IsKeyPressed(CONTROL_DOWN)){
+        PlaySFX(SFX_CURSOR);
+    } else if (IsKeyPressed(CONTROL_DOWN) && mainMenuCursorPos != 1){
         mainMenuCursorPos = 1;
+        PlaySFX(SFX_CURSOR);
     }
 }
 
