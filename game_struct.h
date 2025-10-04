@@ -6,6 +6,13 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+typedef enum {
+    GAME_STATE_MAIN_MENU,
+    GAME_STATE_LEVEL_SELECT,
+    GAME_STATE_PASSWORD,
+    GAME_STATE_LEVEL
+} GAME_STATE;
+
 typedef struct {
     Texture2D *tileTextures;
 } TileSet;
@@ -51,10 +58,12 @@ typedef struct {
 
     Rectangle hitBox;
     Vector2 position;
+    Vector2 respawnPosition;
     Vector2 velocity;
 
     float moveDelayTimer;
     float invincibilityTimer;
+    float respawnTimer;
     float jumpTimer;
 
     float shootTimer;
@@ -134,5 +143,6 @@ typedef struct Level{
 
 
 extern int G_PlayerProjCount;
+extern GAME_STATE currentGameState;
 
 #endif

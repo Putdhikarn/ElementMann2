@@ -33,6 +33,7 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
 
     temp->cSpecial = 0;
     temp->iSpeical = 0;
+    temp->iSpeical2 = 0;
     temp->dSpecial = 0.0;
 
     switch (type){
@@ -143,7 +144,7 @@ void DoEnemyInvCheck(Enemy *enemy, float deltaTime){
 }
 
 void CheckCollisionWithPlayer(Enemy *enemy, Level *level){
-    if (CheckCollisionRecs(enemy->hitBox, level->player->hitBox) && !level->player->invincible){
+    if (CheckCollisionRecs(enemy->hitBox, level->player->hitBox) && !level->player->invincible && level->player->alive){
         DoPlayerHit(level->player, (Vector2){enemy->hitBox.x + (enemy->hitBox.width / 2), enemy->hitBox.y});
     }
 }
@@ -229,10 +230,12 @@ void ED02(Enemy *enemy){
 }
 
 void EP01(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
-    if (CheckCollisionRecs(enemy->hitBox, level->player->hitBox)){
-        enemy->toBeUnload = 1;
+    if (CheckCollisionRecs(enemy->hitBox, level->player->hitBox) && enemy->cSpecial == 0){
         level->camera->camera.target = enemy->respawnPosition;
         level->camera->followPlayer = 0;
+        enemy->cSpecial = 1;
+    } else {
+        enemy->cSpecial = 0;
     }
 }
 

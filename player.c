@@ -18,6 +18,9 @@
 #define GRAVITY 3600.0
 
 #define MAX_INVIN_TIME 0.46
+#define MAX_RESPAWN_TIME 0.46
+
+#define MAX_HP 8
 
 Player* LoadPlayer(float topLeftX, float topLeftY){
     Player *player = (Player *)malloc(sizeof(Player));
@@ -25,6 +28,7 @@ Player* LoadPlayer(float topLeftX, float topLeftY){
     player->spritesNormalInvincible = LoadTexture("./data/sprites/player_inv.png");
 
     player->position = (Vector2){topLeftX, topLeftY};
+    player->respawnPosition = player->position;
     player->hitBox = (Rectangle){topLeftX + 12, topLeftY + 6, 51, 63};
 
     player->spriteTimer = 0.0;
@@ -45,7 +49,7 @@ Player* LoadPlayer(float topLeftX, float topLeftY){
 
     player->invincible = 0;
     player->facing = 0;
-    player->hp = 8;
+    player->hp = MAX_HP;
     player->alive = 1;
     player->jumped = 0;
     player->onGround = 0;
@@ -62,112 +66,141 @@ void ProcessPlayer(Player *player, MapData *currentMap, Level *currentLevel, flo
     // countDelta += deltaTime;
     // count++;
     // Shoot
-    if (IsKeyPressed(CONTROL_CANCEL)){
-        if (player->shootTimer >= 0.02 && G_PlayerProjCount < 3){
-            G_PlayerProjCount++;
-            player->shootTimer = 0;
-            player->shootSprite = 2;
-            player->shootSpriteTimer = 0.0;
-            Vector2 pPos = player->facing == 0 ? (Vector2){player->position.x - 32, player->position.y + 3} : (Vector2){player->position.x + 40, player->position.y + 3};
-            Vector2 pVel = player->facing == 0 ? (Vector2){-1440.0, 0.0} : (Vector2){1440.0, 0.0};
+    if (player->alive){
+        if (IsKeyPressed(CONTROL_CANCEL)){
+            if (player->shootTimer >= 0.02 && G_PlayerProjCount < 3){
+                G_PlayerProjCount++;
+                player->shootTimer = 0;
+                player->shootSprite = 2;
+                player->shootSpriteTimer = 0.0;
+                Vector2 pPos = player->facing == 0 ? (Vector2){player->position.x - 32, player->position.y + 3} : (Vector2){player->position.x + 40, player->position.y + 3};
+                Vector2 pVel = player->facing == 0 ? (Vector2){-1440.0, 0.0} : (Vector2){1440.0, 0.0};
 
-            AddProjectile(currentLevel, MakeProjectile(PROJ_PLAYER_NORMAL, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, player->facing));
-        }
-    }
-    // Jump
-    if (IsKeyDown(CONTROL_CONFIRM) && !(player->invincible && player->invincibilityTimer < MAX_INVIN_TIME)){
-        if (!player->jumped){
-            player->velocity.y = -SHORT_JUMP_FORCE;
-            player->jumped = 1;
-            player->jumpTimer = 0.0;
-        } else if (player->jumpTimer <= 0.07){
-            player->velocity.y -= JUMP_FORCE_ACCEL * deltaTime;
-            player->jumpTimer += deltaTime;
-        }
-    }
-    // Movement
-    if (IsKeyDown(CONTROL_RIGHT) && !(player->invincible && player->invincibilityTimer < MAX_INVIN_TIME)){
-        if (player->moveDelayTimer == 0){
-            player->velocity.x = MOVE_SPEED_STEP;
-            player->moveDelayTimer += deltaTime;
-        } else if (player->moveDelayTimer < 0.14){
-            player->velocity.x = 0;
-            player->moveDelayTimer += deltaTime;
-            player->spriteWalk = 1;
-        } else {
-            player->velocity.x = MOVE_SPEED_WALK;
-            player->spriteWalk = 2;
-            player->spriteTimer += deltaTime;
-        }
-        player->facing = 1;
-    } else if (IsKeyDown(CONTROL_LEFT) && !(player->invincible && player->invincibilityTimer < MAX_INVIN_TIME)){
-        if (player->moveDelayTimer == 0){
-            player->velocity.x = -MOVE_SPEED_STEP;
-            player->moveDelayTimer += deltaTime;
-        } else if (player->moveDelayTimer < 0.14){
-            player->velocity.x = 0;
-            player->moveDelayTimer += deltaTime;
-            player->spriteWalk = 1;
-        } else {
-            player->velocity.x = -MOVE_SPEED_WALK;
-            player->spriteWalk = 2;
-            player->spriteTimer += deltaTime;
-        }
-        player->facing = 0;
-    }
-    // Knock back 
-    else if (player->invincible){
-        if (abs(player->velocity.x) > 0){
-            if (player->velocity.x > 0){
-                player->velocity.x += -KNOCK_BACK_DECEL * deltaTime;
-            } else {
-                player->velocity.x += KNOCK_BACK_DECEL * deltaTime;
+                AddProjectile(currentLevel, MakeProjectile(PROJ_PLAYER_NORMAL, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, player->facing));
             }
         }
-        player->moveDelayTimer = 0;
-        if (!player->jumped){
-            player->spriteLeg = 0;
+        // Jump
+        if (IsKeyDown(CONTROL_CONFIRM) && !(player->invincible && player->invincibilityTimer < MAX_INVIN_TIME)){
+            if (!player->jumped){
+                player->velocity.y = -SHORT_JUMP_FORCE;
+                player->jumped = 1;
+                player->jumpTimer = 0.0;
+            } else if (player->jumpTimer <= 0.07){
+                player->velocity.y -= JUMP_FORCE_ACCEL * deltaTime;
+                player->jumpTimer += deltaTime;
+            }
+        }
+        // Movement
+        if (IsKeyDown(CONTROL_RIGHT) && !(player->invincible && player->invincibilityTimer < MAX_INVIN_TIME)){
+            if (player->moveDelayTimer == 0){
+                player->velocity.x = MOVE_SPEED_STEP;
+                player->moveDelayTimer += deltaTime;
+            } else if (player->moveDelayTimer < 0.14){
+                player->velocity.x = 0;
+                player->moveDelayTimer += deltaTime;
+                player->spriteWalk = 1;
+            } else {
+                player->velocity.x = MOVE_SPEED_WALK;
+                player->spriteWalk = 2;
+                player->spriteTimer += deltaTime;
+            }
+            player->facing = 1;
+        } else if (IsKeyDown(CONTROL_LEFT) && !(player->invincible && player->invincibilityTimer < MAX_INVIN_TIME)){
+            if (player->moveDelayTimer == 0){
+                player->velocity.x = -MOVE_SPEED_STEP;
+                player->moveDelayTimer += deltaTime;
+            } else if (player->moveDelayTimer < 0.14){
+                player->velocity.x = 0;
+                player->moveDelayTimer += deltaTime;
+                player->spriteWalk = 1;
+            } else {
+                player->velocity.x = -MOVE_SPEED_WALK;
+                player->spriteWalk = 2;
+                player->spriteTimer += deltaTime;
+            }
+            player->facing = 0;
+        }
+        // Knock back 
+        else if (player->invincible){
+            if (abs(player->velocity.x) > 0){
+                if (player->velocity.x > 0){
+                    player->velocity.x += -KNOCK_BACK_DECEL * deltaTime;
+                } else {
+                    player->velocity.x += KNOCK_BACK_DECEL * deltaTime;
+                }
+            }
+            player->moveDelayTimer = 0;
+            if (!player->jumped){
+                player->spriteLeg = 0;
+                player->spriteWalk = 0;
+            }
+        } else {
+            player->moveDelayTimer = 0.0;
+            player->velocity.x = 0;
             player->spriteWalk = 0;
+            player->spriteLeg = 0;
         }
-    } else {
-        player->moveDelayTimer = 0.0;
-        player->velocity.x = 0;
-        player->spriteWalk = 0;
-        player->spriteLeg = 0;
-    }
-    // Ground Check and Gravity
-    if (!player->jumped){
-        if (!checkPlayerOnGround(player, currentMap)){
-            player->jumped = 1;
-        }
-    } else {
-        if (checkPlayerOnGround(player, currentMap) && player->velocity.y >= 0.0){
-            player->jumped = 0;
-            player->velocity.y = 0;
+        // Ground Check and Gravity
+        if (!player->jumped){
+            if (!checkPlayerOnGround(player, currentMap)){
+                player->jumped = 1;
+            }
         } else {
-            player->velocity.y += GRAVITY * deltaTime;
+            if (checkPlayerOnGround(player, currentMap) && player->velocity.y >= 0.0){
+                player->jumped = 0;
+                player->velocity.y = 0;
+            } else {
+                player->velocity.y += GRAVITY * deltaTime;
+            }
         }
-    }
-    // Change the player sprite to falling if not on ground
-    if (!checkPlayerOnGround(player, currentMap) || player->jumped){
-        player->spriteWalk = 5;
-    }
+        // Change the player sprite to falling if not on ground
+        if (!checkPlayerOnGround(player, currentMap) || player->jumped){
+            player->spriteWalk = 5;
+        }
 
-    if (player->shootTimer < 0.02){
-        player->shootTimer += deltaTime;
-    }
-    // Invincibility Check
-    if (player->invincible){
-        if (player->invincibilityTimer >= MAX_INVIN_TIME){
+        if (player->shootTimer < 0.02){
+            player->shootTimer += deltaTime;
+        }
+        // Invincibility Check
+        if (player->invincible){
+            if (player->invincibilityTimer >= MAX_INVIN_TIME){
+                player->invincible = 0;
+                player->invincibilityTimer = 0;
+            } else {
+                player->invincibilityTimer += deltaTime;
+            }
+        }
+
+        ApplyPlayerVelocity(player, currentMap, deltaTime);
+        AnimatePlayerSprite(player, deltaTime);
+    } else {
+        // Invincibility Check
+        if (player->invincible){
+            if (player->invincibilityTimer >= MAX_INVIN_TIME){
+                player->invincible = 0;
+                player->invincibilityTimer = 0;
+            } else {
+                player->invincibilityTimer += deltaTime;
+            }
+        }
+        // Respawn Player
+        if (player->respawnTimer >= MAX_RESPAWN_TIME){
+            player->respawnTimer = 0;
+            player->hp = MAX_HP;
+            player->alive = 1;
+            player->velocity.x = 0.0;
+            player->velocity.y = 0.0;
+            player->invincibilityTimer = 0.0;
             player->invincible = 0;
-            player->invincibilityTimer = 0;
+            player->position = player->respawnPosition;
+            currentLevel->camera->followPlayer = 1;
+            currentLevel->camera->camera.target.x = player->position.x;
+            currentLevel->camera->camera.target.y = player->position.y;
         } else {
-            player->invincibilityTimer += deltaTime;
+            player->respawnTimer += deltaTime;
         }
     }
-
-    ApplyPlayerVelocity(player, currentMap, deltaTime);
-    AnimatePlayerSprite(player, deltaTime);
+    
 }
 
 // Apply the Player Velocity to Player Position (And do some hitbox magics so the player won't go though a tile)
@@ -281,7 +314,6 @@ void DoPlayerHit(Player *player, Vector2 hitPos){
         if (player->hp > 0){
             player->invincible = 1;
         } else {
-            player->hp = 8;
             if(player->alive){
                 player->alive = 0;
             }
@@ -290,16 +322,18 @@ void DoPlayerHit(Player *player, Vector2 hitPos){
 }
 
 void DrawPlayer(Player *player){
-    Rectangle drawRect = (Rectangle){player->spirteX * 72, player->spirteY * 72, 72, 72};
-    // TraceLog(LOG_INFO, TextFormat("*%u", &player->spritesNormal));
-    if (player->invincible && (int)(player->invincibilityTimer * 100000) % 2 == 0){
-        DrawTextureRec(player->spritesNormalInvincible, drawRect, player->position, WHITE);
-        player->invSpriteCounter = 0;
-    } else {
-        DrawTextureRec(player->spritesNormal, drawRect, player->position, WHITE);
-        player->invSpriteCounter++;
+    if (player->alive){
+        Rectangle drawRect = (Rectangle){player->spirteX * 72, player->spirteY * 72, 72, 72};
+        // TraceLog(LOG_INFO, TextFormat("*%u", &player->spritesNormal));
+        if (player->invincible && (int)(player->invincibilityTimer * 100000) % 2 == 0){
+            DrawTextureRec(player->spritesNormalInvincible, drawRect, player->position, WHITE);
+            player->invSpriteCounter = 0;
+        } else {
+            DrawTextureRec(player->spritesNormal, drawRect, player->position, WHITE);
+            player->invSpriteCounter++;
+        }
+        // DrawTextureV(player->spritesNormal, player->position, WHITE);
     }
-    // DrawTextureV(player->spritesNormal, player->position, WHITE);
 }
 
 void UnloadPlayer(Player *player){

@@ -24,6 +24,7 @@
         "game_def.h": "c",
         "stddef.h": "c",
         "camera.h": "c",
-        "enemy.h": "c"
+        "enemy.h": "c",
+        "main_menu.h": "c"
     }
 }

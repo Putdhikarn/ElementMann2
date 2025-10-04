@@ -12,6 +12,7 @@ Level *currentLevel;
 
 // Init the Game
 void GameInit(){
+    LoadMainMenu();
     SetRandomSeed(451);
     G_PlayerProjCount = 0;
     player = LoadPlayer(17 * GAME_TILE_SIZE, 9 * GAME_TILE_SIZE);
@@ -56,44 +57,71 @@ void GameLoop(){
     CleanUpProjectile(currentLevel);
     // Process Logic Down Here...
     deltaTime = GetFrameTime();
-    ProcessPlayer(player, testMap, currentLevel, deltaTime);
-    ProcessLevelEnemy(currentLevel, testMap, deltaTime);
-    ProcessLevelProjectile(currentLevel, testMap, deltaTime);
-    if (currentLevel->camera->followPlayer){
-        // currentLevel->camera->camera.target.x = player->position.x;
-        // currentLevel->camera->camera.target.y = player->position.y;
-        InterpolateCameraToPos(currentLevel->camera, (Vector2){player->position.x + 36, player->position.y + 36}, 16.0, deltaTime);
+    switch (currentGameState)
+    {
+        case GAME_STATE_MAIN_MENU:
+            ProcessMainMenu();
+            break;
+        case GAME_STATE_LEVEL_SELECT:
+            break;
+        case GAME_STATE_PASSWORD:
+            break;
+        case GAME_STATE_LEVEL:
+            ProcessPlayer(player, testMap, currentLevel, deltaTime);
+            ProcessLevelEnemy(currentLevel, testMap, deltaTime);
+            ProcessLevelProjectile(currentLevel, testMap, deltaTime);
+            if (currentLevel->camera->followPlayer){
+                // currentLevel->camera->camera.target.x = player->position.x;
+                // currentLevel->camera->camera.target.y = player->position.y;
+                InterpolateCameraToPos(currentLevel->camera, (Vector2){player->position.x + 36, player->position.y + 36}, 16.0, deltaTime);
+            }
+            break;
     }
+    
     // Draw Stuff Down Here...
-    // Draw Worldspace Stuff
     BeginDrawing();
     ClearBackground(BLACK);
-    BeginMode2D(currentLevel->camera->camera);
-    // Draw Map
-    for (int i = (((int)currentLevel->camera->camera.target.y - (int)currentLevel->camera->camera.offset.y) / GAME_TILE_SIZE); i < ((int)currentLevel->camera->camera.target.y + (int)currentLevel->camera->camera.offset.y) / 48 + 1; i++){
-        for (int j = (((int)currentLevel->camera->camera.target.x - (int)currentLevel->camera->camera.offset.x) / GAME_TILE_SIZE); j < ((int)currentLevel->camera->camera.target.x + (int)currentLevel->camera->camera.offset.x) / 48 + 1; j++){
-            if (i < testMap->height && i >= 0 && j < testMap->width && j >= 0){
-                int offset = i * testMap->width + j;
-                if (testMap->mapData[offset] > 0){
-                    DrawTexture(*(testMap->tileSet->tileTextures + testMap->mapData[offset]), j * 48, i * 48, WHITE);
-                }
-            }
-        }
+    switch (currentGameState)
+    {
+        case GAME_STATE_MAIN_MENU:
+            DrawMainMeun();
+            break;
+        case GAME_STATE_LEVEL_SELECT:
+            break;
+        case GAME_STATE_PASSWORD:
+            break;
+        case GAME_STATE_LEVEL:
+            // BeginMode2D(currentLevel->camera->camera);
+            // // Draw Map
+            // for (int i = (((int)currentLevel->camera->camera.target.y - (int)currentLevel->camera->camera.offset.y) / GAME_TILE_SIZE); i < ((int)currentLevel->camera->camera.target.y + (int)currentLevel->camera->camera.offset.y) / 48 + 1; i++){
+            //     for (int j = (((int)currentLevel->camera->camera.target.x - (int)currentLevel->camera->camera.offset.x) / GAME_TILE_SIZE); j < ((int)currentLevel->camera->camera.target.x + (int)currentLevel->camera->camera.offset.x) / 48 + 1; j++){
+            //         if (i < testMap->height && i >= 0 && j < testMap->width && j >= 0){
+            //             int offset = i * testMap->width + j;
+            //             if (testMap->mapData[offset] > 0){
+            //                 DrawTexture(*(testMap->tileSet->tileTextures + testMap->mapData[offset]), j * 48, i * 48, WHITE);
+            //             }
+            //         }
+            //     }
+            // }
+            // DrawPlayer(player);
+            // DrawLevelEnemy(currentLevel);
+            // DrawLevelProjectile(currentLevel);
+            // EndMode2D();
+            // // Draw Screenspace Stuff (UI)
+            // DrawTextureRec(playerHpBar, (Rectangle){0, 0, player->hp * 18, 48}, (Vector2){GAME_TILE_SIZE, GAME_TILE_SIZE}, WHITE);
+            // DrawText("It works!", 20, 20, 20, WHITE);
+            // DrawFPS(1000, 100);
+            // DrawText(TextFormat("%f", deltaTime), 100, 100, 20, WHITE);
+            break;
     }
-    DrawPlayer(player);
-    DrawLevelEnemy(currentLevel);
-    DrawLevelProjectile(currentLevel);
-    EndMode2D();
-    // Draw Screenspace Stuff
-    DrawTextureRec(playerHpBar, (Rectangle){0, 0, player->hp * 18, 48}, (Vector2){GAME_TILE_SIZE, GAME_TILE_SIZE}, WHITE);
-	DrawText("It works!", 20, 20, 20, WHITE);
-    DrawFPS(1000, 100);
-	DrawText(TextFormat("%f", deltaTime), 100, 100, 20, WHITE);
-	EndDrawing();
+    // Draw Worldspace Stuff
+    EndDrawing();
+    
 }
 
 // Clean Up All the Used Memory
 void GameCleanUp(){
+    UnloadMainMenu();
     UnloadPlayer(player);
     UnloadProjectileTextures();
     UnloadEnemyTextures();
