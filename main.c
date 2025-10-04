@@ -6,6 +6,8 @@ int main() {
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Elemant Mann2");
 
+    InitAudioDevice();
+
     SetTargetFPS(GetMonitorRefreshRate(0));
     // SetTargetFPS(60);
 
@@ -16,7 +18,7 @@ int main() {
     }
 
     GameCleanUp();
-
+    CloseAudioDevice();
     CloseWindow();
     return 0;
 }
