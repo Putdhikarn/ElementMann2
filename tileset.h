@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 TileSet* LoadTileSetFromImage(const char *fileName, int tileSize);
+void DrawTileFromSet(TileSet *TileSet, int tileIndex,int x,int y);
 void UnloadTileSet(TileSet *tileSet);
 
 #endif

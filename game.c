@@ -1,4 +1,5 @@
 #include "game.h"
+#include "map.h"
 
 Player *player;
 MapData *testMap;
@@ -99,16 +100,17 @@ void GameLoop(){
         case GAME_STATE_LEVEL:
             BeginMode2D(currentLevel->camera->camera);
             // Draw Map
-            for (int i = (((int)currentLevel->camera->camera.target.y - (int)currentLevel->camera->camera.offset.y) / GAME_TILE_SIZE); i < ((int)currentLevel->camera->camera.target.y + (int)currentLevel->camera->camera.offset.y) / 48 + 1; i++){
-                for (int j = (((int)currentLevel->camera->camera.target.x - (int)currentLevel->camera->camera.offset.x) / GAME_TILE_SIZE); j < ((int)currentLevel->camera->camera.target.x + (int)currentLevel->camera->camera.offset.x) / 48 + 1; j++){
-                    if (i < testMap->height && i >= 0 && j < testMap->width && j >= 0){
-                        int offset = i * testMap->width + j;
-                        if (testMap->mapData[offset] > 0){
-                            DrawTexture(*(testMap->tileSet->tileTextures + testMap->mapData[offset]), j * 48, i * 48, WHITE);
-                        }
-                    }
-                }
-            }
+            // for (int i = (((int)currentLevel->camera->camera.target.y - (int)currentLevel->camera->camera.offset.y) / GAME_TILE_SIZE); i < ((int)currentLevel->camera->camera.target.y + (int)currentLevel->camera->camera.offset.y) / 48 + 1; i++){
+            //     for (int j = (((int)currentLevel->camera->camera.target.x - (int)currentLevel->camera->camera.offset.x) / GAME_TILE_SIZE); j < ((int)currentLevel->camera->camera.target.x + (int)currentLevel->camera->camera.offset.x) / 48 + 1; j++){
+            //         if (i < testMap->height && i >= 0 && j < testMap->width && j >= 0){
+            //             int offset = i * testMap->width + j;
+            //             if (testMap->mapData[offset] > 0){
+            //                 DrawTexture(*(testMap->tileSet->tileTextures + testMap->mapData[offset]), j * 48, i * 48, WHITE);
+            //             }
+            //         }
+            //     }
+            // }
+            DrawMap(testMap);
             DrawPlayer(player);
             DrawLevelEnemy(currentLevel);
             DrawLevelProjectile(currentLevel);
