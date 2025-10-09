@@ -3,8 +3,8 @@
 
 TileSet* LoadTileSetFromImage(const char *fileName, int tileSize){
     TileSet* tileSet = malloc(sizeof(TileSet));
-    // load the source image.
-    tileSet->texture = LoadTexture(fileName); // โหลดภาพใหญ่เพียงครั้งเดียว
+    // load the source image..
+    tileSet->texture = LoadTexture(fileName);
     tileSet->tileSize = tileSize;
     return tileSet;
 }
