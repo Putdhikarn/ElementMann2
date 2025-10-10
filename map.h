@@ -11,6 +11,7 @@
 MapData* LoadMapDataFromFile(const char *fileName);
 void UnloadMapData(MapData *mapData);
 void SetMapTileSet(const char *fileName, MapData *mapData, int tileSize);
+void DrawMap(MapData *mapData);
 
 int IsTileAtPositionBlocking(MapData *mapData, float worldX, float worldY);
 int IsRectAtPostitionIntersectAnyTile(MapData *mapData, Rectangle rect);

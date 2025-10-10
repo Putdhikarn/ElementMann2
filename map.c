@@ -1,9 +1,11 @@
 #include "map.h"
+#include "tileset.h"
 #define STATE_HEADER 0
 #define STATE_MAP 1
+#define TILE_ID_BASE 0
 
 MapData* LoadMapDataFromFile(const char *fileName){
-    MapData *mapData;
+    MapData *mapData = NULL;
     FILE *file = fopen(fileName, "r");
     if (file == NULL){
         TraceLog(LOG_ERROR, "Map File Not Found.");
@@ -117,4 +119,27 @@ int IsRectAtPostitionNotIntersectAnyTile(MapData *mapData, Rectangle rect){
     int botRight = IsTileAtPositionBlocking(mapData, rect.x + rect.width, rect.y + rect.height);
 
     return (!topLeft && !topRight && !botLeft && !botRight);
+}
+void DrawMap(MapData *mapData){
+    if (!mapData || !mapData->tileSet || !mapData->mapData) return;
+
+    int texW = mapData->tileSet->texture.width;
+    int texH = mapData->tileSet->texture.height;
+    int tilesPerRow = texW / mapData->tileSet->tileSize;
+    int tilesPerCol = texH / mapData->tileSet->tileSize;
+    int totalTiles  = tilesPerRow * tilesPerCol;
+
+    for (int y = 0; y < mapData->height; y++){
+        for (int x = 0; x < mapData->width; x++){
+            int tile = mapData->mapData[y * mapData->width + x];
+            if (tile < 0) continue;
+
+            int idx = tile - TILE_ID_BASE;
+            if (idx < 0 || idx >= totalTiles) continue;
+
+            DrawTileFromSet(mapData->tileSet, tile,
+                            x * mapData->tileSet->tileSize,
+                            y * mapData->tileSet->tileSize);
+        }
+    }
 }
