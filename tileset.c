@@ -1,31 +1,33 @@
 #include "tileset.h"
+#define TILE_ID_BASE 0
 
 TileSet* LoadTileSetFromImage(const char *fileName, int tileSize){
     TileSet* tileSet = malloc(sizeof(TileSet));
     // load the source image.
-    Image source = LoadImage(fileName);
-    // prepare image for slicing.
-    int column = source.width / tileSize;
-    int row = source.height / tileSize;
-    tileSet->tileTextures = (Texture *)malloc(sizeof(Texture) * (column * row));
-    Rectangle sliceRect = {0, 0, tileSize, tileSize};
-    // slice the image to texture.
-    Texture *textPt = tileSet->tileTextures;
-    for (int r = 0; r < row; r++){
-        for (int c = 0; c < column; c++){
-            sliceRect.x = c * tileSize;
-            sliceRect.y = r * tileSize;
-            Image sliced = ImageFromImage(source, sliceRect);
-            *textPt = LoadTextureFromImage(sliced);
-            textPt++;
-            UnloadImage(sliced);
-        }
-    }
-
-    UnloadImage(source);
+    tileSet->texture = LoadTexture(fileName); // โหลดภาพใหญ่เพียงครั้งเดียว
+    tileSet->tileSize = tileSize;
     return tileSet;
 }
+void DrawTileFromSet(TileSet *tileSet, int tileIndex, int x, int y){
+    if (!tileSet) return;
+    if (TILE_ID_BASE == 1 && tileIndex <= 0) return;
+
+    int idx = tileIndex - TILE_ID_BASE;
+
+    int tilesPerRow = tileSet->texture.width  / tileSet->tileSize;
+    int tilesPerCol = tileSet->texture.height / tileSet->tileSize;
+    int totalTiles  = tilesPerRow * tilesPerCol;
+
+    if (idx < 0 || idx >= totalTiles) return;
+
+    int c = idx % tilesPerRow;
+    int r = idx / tilesPerRow;
+
+    Rectangle src = { c * tileSet->tileSize, r * tileSet->tileSize,
+                      tileSet->tileSize, tileSet->tileSize };
+    DrawTextureRec(tileSet->texture, src, (Vector2){x, y}, WHITE);
+}
 void UnloadTileSet(TileSet *tileSet){
-    UnloadTexture(*tileSet->tileTextures);
+    UnloadTexture(tileSet->texture);
     free(tileSet);
 }

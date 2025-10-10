@@ -14,7 +14,8 @@ typedef enum {
 } GAME_STATE;
 
 typedef struct {
-    Texture2D *tileTextures;
+    Texture2D texture;
+    int tileSize;
 } TileSet;
 
 typedef struct {
