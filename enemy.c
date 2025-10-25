@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include "game_struct.h"
 
 #define ENEMY_INV_TIME_MAX 0.35 
 
@@ -54,7 +55,7 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->hitBoxOffset = (Vector2){27, 21};
             temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
             temp->spriteSize = 96;
-            temp->hp = 24;
+            temp->hp = 1;
             temp->respawnHp = temp->hp;
             temp->cSpecial = 0;
             temp->iSpeical = 1;
@@ -381,6 +382,7 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
         }
        
     }
+
     // reinit enemy for respawn
     else {
         enemy->iSpeical = enemy->respawnPosition.x > level->player->position.x;
@@ -390,6 +392,11 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
         enemy->invincible = 0;
         enemy->invTimer = 0.0;
         enemy->hp = enemy->respawnHp;
+    }
+    // boss state = dead?
+    if (enemy->dead == 1 && enemy->type == EN_BOSS1) {
+        currentGameState = GAME_STATE_WIN;
+        return;
     }
 }
 

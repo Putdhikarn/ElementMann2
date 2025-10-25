@@ -1,5 +1,7 @@
 #include "game.h"
 #include "map.h"
+#include "win_screen.h"
+
 
 Player *player;
 MapData *testMap;
@@ -16,6 +18,7 @@ void GameInit(){
     LoadAudio();
     LoadMainMenu();
     LoadLevelSelect();
+    LoadWinScreen();
     SetRandomSeed(451);
     G_PlayerProjCount = 0;
     player = LoadPlayer(17 * GAME_TILE_SIZE, 12 * GAME_TILE_SIZE);
@@ -82,22 +85,32 @@ void GameLoop(){
                 InterpolateCameraToPos(currentLevel->camera, (Vector2){player->position.x + 36, player->position.y + 36}, 16.0, deltaTime);
             }
             break;
+        case GAME_STATE_WIN:
+            ProcessWinScreen();
+            break;
+
     }
     
     // Draw Stuff Down Here...
-    BeginDrawing();
-    ClearBackground(BLACK);
     switch (currentGameState)
     {
         case GAME_STATE_MAIN_MENU:
+            BeginDrawing();
+            ClearBackground(BLACK);
             DrawMainMeun();
+            EndDrawing();
             break;
         case GAME_STATE_LEVEL_SELECT:
+            BeginDrawing();
+            ClearBackground(BLACK);
             DrawLevelSelect();
+            EndDrawing();
             break;
         case GAME_STATE_PASSWORD:
             break;
         case GAME_STATE_LEVEL:
+            BeginDrawing();
+            ClearBackground(BLACK);
             BeginMode2D(currentLevel->camera->camera);
             // Draw Map
             // for (int i = (((int)currentLevel->camera->camera.target.y - (int)currentLevel->camera->camera.offset.y) / GAME_TILE_SIZE); i < ((int)currentLevel->camera->camera.target.y + (int)currentLevel->camera->camera.offset.y) / 48 + 1; i++){
@@ -120,10 +133,13 @@ void GameLoop(){
             DrawText("It works!", 20, 20, 20, WHITE);
             DrawFPS(1000, 100);
             DrawText(TextFormat("%f", deltaTime), 100, 100, 20, WHITE);
+            EndDrawing();
+            break;
+        case GAME_STATE_WIN:
+            DrawWinScreen();
             break;
     }
     // Draw Worldspace Stuff
-    EndDrawing();
     
 }
 
@@ -137,5 +153,6 @@ void GameCleanUp(){
     UnloadTexture(playerHpBar);
     UnloadLevel(currentLevel);
     UnloadAudio();
+    UnloadWinScreen();
     // UnloadMapData(testMap);
 }
