@@ -1,5 +1,7 @@
 #include "game.h"
 #include "map.h"
+#include "win_screen.h"
+
 
 Player *player;
 MapData *testMap;
@@ -16,6 +18,7 @@ void GameInit(){
     LoadAudio();
     LoadMainMenu();
     LoadLevelSelect();
+    LoadWinScreen();
     SetRandomSeed(451);
     G_PlayerProjCount = 0;
     player = LoadPlayer(17 * GAME_TILE_SIZE, 12 * GAME_TILE_SIZE);
@@ -82,6 +85,10 @@ void GameLoop(){
                 InterpolateCameraToPos(currentLevel->camera, (Vector2){player->position.x + 36, player->position.y + 36}, 16.0, deltaTime);
             }
             break;
+        case GAME_STATE_WIN:
+            ProcessWinScreen();
+            break;
+
     }
     
     // Draw Stuff Down Here...
@@ -121,6 +128,9 @@ void GameLoop(){
             DrawFPS(1000, 100);
             DrawText(TextFormat("%f", deltaTime), 100, 100, 20, WHITE);
             break;
+        case GAME_STATE_WIN:
+            DrawWinScreen();
+            break;
     }
     // Draw Worldspace Stuff
     EndDrawing();
@@ -137,5 +147,6 @@ void GameCleanUp(){
     UnloadTexture(playerHpBar);
     UnloadLevel(currentLevel);
     UnloadAudio();
+    UnloadWinScreen();
     // UnloadMapData(testMap);
 }
