@@ -9,6 +9,7 @@ void LoadProjectileTextures(){
     projectileTextures[PROJ_BOSS2] = LoadTexture("data/sprites/boss2_projectile.png");
     projectileTextures[PROJ_BOSS3] = LoadTexture("data/sprites/boss3_projectile.png");
     projectileTextures[PROJ_BOSS4] = LoadTexture("data/sprites/boss4_projectile.png");
+    projectileTextures[PROJ_PDEAD] = LoadTexture("data/sprites/death_effect.png");
 }
 
 // PROJ_PLAYER_NORMAL
@@ -81,7 +82,7 @@ void P2(Projectile *projectile, MapData *currentMap, Level *level, float deltaTi
     Vector2 screenPos = GetWorldToScreen2D(projectile->position, level->camera->camera);
     // Check collision with player
 
-    if (level->player != NULL){
+    if (level->player != NULL && projectile->type != PROJ_PDEAD){
         if (CheckCollisionRecs(projectile->hitBox, level->player->hitBox)){
             if (!projectile->hitSomething && !level->player->invincible && level->player->alive){
                 projectile->hitSomething = 1;
@@ -194,6 +195,9 @@ void ProcessProjectile(Projectile *projectile, MapData *currentMap, Level *level
             P3(projectile, currentMap, level, deltaTime);
             break;
         case PROJ_BOSS4:
+            P2(projectile, currentMap, level, deltaTime);
+            break;
+        case PROJ_PDEAD:
             P2(projectile, currentMap, level, deltaTime);
             break;
     }

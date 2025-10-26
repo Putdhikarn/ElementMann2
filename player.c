@@ -18,9 +18,11 @@
 #define GRAVITY 3600.0
 
 #define MAX_INVIN_TIME 0.46
-#define MAX_RESPAWN_TIME 0.46
+#define MAX_RESPAWN_TIME 1.35
 
 #define MAX_HP 8
+
+Level* playerLevelPointer = NULL;
 
 Player* LoadPlayer(float topLeftX, float topLeftY){
     Player *player = (Player *)malloc(sizeof(Player));
@@ -68,6 +70,9 @@ void ProcessPlayer(Player *player, MapData *currentMap, Level *currentLevel, flo
     // TraceLog(LOG_INFO, TextFormat("*%f %d", player->respawnTimer, currentLevel->camera->followPlayer));
     // countDelta += deltaTime;
     // count++;
+    if (playerLevelPointer == NULL){
+        playerLevelPointer = currentLevel;
+    }
     // Shoot
     if (player->alive){
         if (IsKeyPressed(CONTROL_CANCEL)){
@@ -322,6 +327,14 @@ void DoPlayerHit(Player *player, Vector2 hitPos){
             if(player->alive){
                 player->alive = 0;
             }
+            // spawn death effect
+            for (int i = 0; i <= 360; i += 36){
+                Vector2 pDir = (Vector2){cos((double)i * (PI / 180.0)), sin((double)i * (PI / 180.0))};
+                Vector2 pPos = (Vector2){player->hitBox.x + player->hitBox.width / 2, player->hitBox.y + player->hitBox.height / 2};
+                Vector2 pVel = (Vector2){1000.0, -1000.0};
+                pVel = Vector2Multiply(pVel, Vector2Normalize(pDir));
+                AddProjectile(playerLevelPointer, MakeProjectile(PROJ_PDEAD, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, player->facing));
+            }
             PlaySFX(SFX_PLAYER_DEAD);
         }
     }
@@ -347,4 +360,5 @@ void UnloadPlayer(Player *player){
     UnloadTexture(player->spritesNormalInvincible);
     free(player);
     player = NULL;
+    playerLevelPointer = NULL;
 }

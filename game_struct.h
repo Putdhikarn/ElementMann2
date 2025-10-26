@@ -31,7 +31,8 @@ typedef enum {
     PROJ_BOSS1_2,
     PROJ_BOSS2,
     PROJ_BOSS3,
-    PROJ_BOSS4
+    PROJ_BOSS4,
+    PROJ_PDEAD
 } PROJ_TYPE;
 
 typedef struct Projectile{
