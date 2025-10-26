@@ -28,7 +28,8 @@ typedef struct {
 typedef enum {
     PROJ_PLAYER_NORMAL,
     PROJ_BOSS1,
-    PROJ_BOSS1_2
+    PROJ_BOSS1_2,
+    PROJ_BOSS2
 } PROJ_TYPE;
 
 typedef struct Projectile{
@@ -91,7 +92,10 @@ typedef struct {
 typedef enum {
     EN_WALK,
     EN_BOSSROOM_TRIGGER,
-    EN_BOSS1
+    EN_BOSS1,
+    EN_BOSS2,
+    EN_BOSS3,
+    EN_BOSS4
 } ENEMY_TYPE;
 
 typedef struct Enemy{
@@ -138,7 +142,7 @@ typedef struct GameCamera{
 typedef struct Level{
     GameCamera *camera;
     Projectile *projectiles[256];
-    Enemy *enemies[256];
+    Enemy *enemies[64];
     Player* player;
 } Level;
 

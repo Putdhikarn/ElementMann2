@@ -89,11 +89,11 @@ void ProcessPlayer(Player *player, MapData *currentMap, Level *currentLevel, flo
                 player->velocity.y = -SHORT_JUMP_FORCE;
                 player->jumped = 1;
                 player->jumpTimer = 0.0;
+                PlaySFX(SFX_JUMP);
             } else if (player->jumpTimer <= 0.07){
                 player->velocity.y -= JUMP_FORCE_ACCEL * deltaTime;
                 player->jumpTimer += deltaTime;
             }
-            PlaySFX(SFX_JUMP);
         }
         // Movement
         if (IsKeyDown(CONTROL_RIGHT) && !(player->invincible && player->invincibilityTimer < MAX_INVIN_TIME)){

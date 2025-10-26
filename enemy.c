@@ -8,6 +8,7 @@ Texture enemyTextures[MAX_ENEMY_TYPE];
 void LoadEnemyTextures(){
     enemyTextures[EN_WALK] = LoadTexture("data/sprites/enemy.png");
     enemyTextures[EN_BOSS1] = LoadTexture("data/sprites/boss1.png");
+    enemyTextures[EN_BOSS2] = LoadTexture("data/sprites/boss2.png");
 }
 
 Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
@@ -55,7 +56,40 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->hitBoxOffset = (Vector2){27, 21};
             temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
             temp->spriteSize = 96;
-            temp->hp = 1;
+            temp->hp = 24;
+            temp->respawnHp = temp->hp;
+            temp->cSpecial = 0;
+            temp->iSpeical = 1;
+            temp->iSpeical2 = 0;
+            temp->dSpecial = 0;
+            break;
+        case EN_BOSS2:
+            temp->hitBoxOffset = (Vector2){27, 21};
+            temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
+            temp->spriteSize = 96;
+            temp->hp = 24;
+            temp->respawnHp = temp->hp;
+            temp->cSpecial = 0;
+            temp->iSpeical = 1;
+            temp->iSpeical2 = 0;
+            temp->dSpecial = 0;
+            break;
+        case EN_BOSS3:
+            temp->hitBoxOffset = (Vector2){27, 21};
+            temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
+            temp->spriteSize = 96;
+            temp->hp = 24;
+            temp->respawnHp = temp->hp;
+            temp->cSpecial = 0;
+            temp->iSpeical = 1;
+            temp->iSpeical2 = 0;
+            temp->dSpecial = 0;
+            break;
+        case EN_BOSS4:
+            temp->hitBoxOffset = (Vector2){27, 21};
+            temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
+            temp->spriteSize = 96;
+            temp->hp = 24;
             temp->respawnHp = temp->hp;
             temp->cSpecial = 0;
             temp->iSpeical = 1;
@@ -150,6 +184,12 @@ void CheckCollisionWithPlayer(Enemy *enemy, Level *level){
     }
 }
 
+char GetEnemyFacingToPlayer(Enemy *enemy, Level *level){
+    return (enemy->hitBox.x + enemy->hitBox.width / 2 < level->player->hitBox.x + level->player->hitBox.width / 2);
+}
+
+// Unused, Cause there no more time to make an actual level, only boss.
+// Code left here for reference.
 void EP0(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // invincibility check
     DoEnemyInvCheck(enemy, deltaTime);
@@ -241,6 +281,11 @@ void EP01(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 }
 
 void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
+    // change game state to win if boos is dead
+    if (enemy->dead == 1 && enemy->type == EN_BOSS1) {
+        currentGameState = GAME_STATE_WIN;
+        return;
+    }
     // invincibility check
     DoEnemyInvCheck(enemy, deltaTime);
     // spawn/Respawn enemy when on screen
@@ -393,10 +438,146 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
         enemy->invTimer = 0.0;
         enemy->hp = enemy->respawnHp;
     }
-    // boss state = dead?
-    if (enemy->dead == 1 && enemy->type == EN_BOSS1) {
+}
+
+void EP03(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
+    // change game state to win if boos is dead
+    if (enemy->dead == 1 && enemy->type == EN_BOSS2) {
         currentGameState = GAME_STATE_WIN;
         return;
+    }
+    // invincibility check
+    DoEnemyInvCheck(enemy, deltaTime);
+    // spawn/Respawn enemy when on screen
+    if (IsRectOnScreen(enemy->hitBox, level->camera->camera) && !enemy->active && !enemy->dead){
+        enemy->active = 1;
+    } 
+    // despawn when off screen
+    else if ((!IsRectOnScreen(enemy->hitBox, level->camera->camera) && enemy->dead) || !IsRectOnScreenPartial(enemy->hitBox, level->camera->camera)){
+        enemy->active = 0;
+        enemy->dead = 0;
+    } 
+    // normal process
+    else if (!enemy->dead && enemy->active){
+        int attackRng = GetRandomValue(0, 256);
+        switch (enemy->cSpecial){
+            // wait state
+            case 0:
+                enemy->facing = GetEnemyFacingToPlayer(enemy, level);
+                enemy->iSpeical = !GetEnemyFacingToPlayer(enemy, level); // MovingLeft
+                if (!checkEnemyOnGround(enemy, currentMap)){
+                    enemy->velocity.y = 480.0;
+                } else {
+                    enemy->velocity.y = 0.0;
+                }
+                enemy->dSpecial += deltaTime; // wait timer
+                if (enemy->dSpecial >= 0.45 && (float)enemy->hp / (float)enemy->respawnHp < 0.55){
+                    enemy->cSpecial = 2;
+                    enemy->velocity.y = -1200;
+                    enemy->dSpecial = 0;
+                } else if (enemy->dSpecial >= 0.75){
+                    enemy->cSpecial = 2;
+                    enemy->velocity.y = -1200;
+                    enemy->dSpecial = 0;
+                }
+                ApplyEnemyVelocity(enemy, currentMap, deltaTime);
+                break;
+            // shoot state
+            case 1:
+                if (enemy->dSpecial >= 0.35){
+                    enemy->dSpecial = 0;
+                    Vector2 pPos = enemy->facing == 0 ? (Vector2){enemy->position.x - 38, enemy->position.y + 32} : (Vector2){enemy->position.x + 46, enemy->position.y + 32};
+                    Vector2 pVel = enemy->facing == 0 ? (Vector2){-1330.0, 0.0} : (Vector2){1330.0, 0.0};
+                    AddProjectile(level, MakeProjectile(PROJ_BOSS1, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
+                    enemy->iSpeical2++;
+                    if (enemy->iSpeical2 >= 3){
+                        enemy->iSpeical2 = 0;
+                        if ((float)enemy->hp / (float)enemy->respawnHp < 0.55 && attackRng % 2 == 0){
+                            enemy->cSpecial = 2;
+                            enemy->velocity.y = -1200;
+                            ApplyEnemyVelocity(enemy, currentMap, deltaTime);
+                            break;
+                        } else {
+                            enemy->cSpecial = 0;
+                        }
+                    }
+                } else {
+                    enemy->dSpecial += deltaTime;
+                }
+                break;
+            // jump to middle state
+            case 2:
+                if (enemy->iSpeical){
+                    enemy->velocity.x = -560.0;
+                    enemy->facing = 0;
+                } else {
+                    enemy->velocity.x = 560.0;
+                    enemy->facing = 1;
+                }
+                if (!checkEnemyOnGround(enemy, currentMap)){
+                    if (enemy->velocity.y < 0){
+                        enemy->velocity.y += 2400.0 * deltaTime;
+                    } else {
+                        enemy->velocity.y += 3600.0 * deltaTime;
+                    }
+                } else {
+                    enemy->cSpecial = 3;
+                    enemy->spriteX = 0;
+                    enemy->velocity.y = 0.0;
+                    enemy->velocity.x = 0.0;
+                }
+                ApplyEnemyVelocity(enemy, currentMap, deltaTime);
+                break;
+            // shoot circle state
+            case 3:
+                if (enemy->dSpecial <= 0.0){
+                    enemy->dSpecial = 0;
+                    for (int i = 0; i <= 180; i += 36){
+                        Vector2 pDir = (Vector2){cos((double)i * (PI / 180.0)), sin((double)i * (PI / 180.0))};
+                        Vector2 pPos = (Vector2){enemy->hitBox.x + enemy->hitBox.width / 2, enemy->hitBox.y + enemy->hitBox.height / 2};
+                        Vector2 pVel = (Vector2){1330.0, -1330.0};
+                        pVel = Vector2Multiply(pVel, Vector2Normalize(pDir));
+                        AddProjectile(level, MakeProjectile(PROJ_BOSS2, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
+                    }
+                }
+                if (enemy->dSpecial >= 0.45 && (float)enemy->hp / (float)enemy->respawnHp < 0.55){
+                    enemy->cSpecial = 0;
+                    enemy->dSpecial = 0;
+                } else if (enemy->dSpecial >= 0.75){
+                    enemy->cSpecial = 0;
+                    enemy->dSpecial = 0;
+                } else {
+                    enemy->dSpecial += deltaTime;
+                }
+                break;
+        }
+        // Check collision with player
+        CheckCollisionWithPlayer(enemy, level);
+        // animation stuff
+        enemy->spriteY = enemy->facing;
+        switch (enemy->cSpecial){
+            case 0:
+                enemy->spriteX = 0;
+                break;
+            case 2:
+                enemy->spriteX = 1;
+                break;
+            case 3:
+                enemy->spriteX = 0;
+                enemy->spriteY += 2;
+        }
+       
+    }
+
+    // reinit enemy for respawn
+    else {
+        enemy->iSpeical = enemy->respawnPosition.x > level->player->position.x;
+        enemy->position = enemy->respawnPosition;
+        enemy->velocity.x = 0;
+        enemy->velocity.y = 0;
+        enemy->invincible = 0;
+        enemy->invTimer = 0.0;
+        enemy->hp = enemy->respawnHp;
     }
 }
 
@@ -409,6 +590,15 @@ void ProcessEnemy(Enemy *enemy, MapData *currentMap, Level *level, float deltaTi
             EP01(enemy, currentMap, level, deltaTime);
             break;
         case EN_BOSS1:
+            EP02(enemy, currentMap, level, deltaTime);
+            break;
+        case EN_BOSS2:
+            EP03(enemy, currentMap, level, deltaTime);
+            break;
+        case EN_BOSS3:
+            EP02(enemy, currentMap, level, deltaTime);
+            break;
+        case EN_BOSS4:
             EP02(enemy, currentMap, level, deltaTime);
             break;
     }

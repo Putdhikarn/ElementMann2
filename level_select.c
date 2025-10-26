@@ -1,5 +1,7 @@
 #include "level_select.h"
 
+char selectedLevel = 0;
+
 char selectCursorX = 0;
 char selectCursorY = 0;
 
@@ -21,12 +23,12 @@ void LoadLevelSelect(){
 
     levelIcon1 = LoadTexture("data/sprites/stage1.png");
     levelIcon1G = LoadTexture("data/sprites/stage1g.png");
-    levelIcon2 = LoadTexture("data/sprites/stage1.png");
-    levelIcon2G = LoadTexture("data/sprites/stage1g.png");
-    levelIcon3 = LoadTexture("data/sprites/stage1.png");
-    levelIcon3G = LoadTexture("data/sprites/stage1g.png");
-    levelIcon4 = LoadTexture("data/sprites/stage1.png");
-    levelIcon4G = LoadTexture("data/sprites/stage1g.png");
+    levelIcon2 = LoadTexture("data/sprites/stage2.png");
+    levelIcon2G = LoadTexture("data/sprites/stage2g.png");
+    levelIcon3 = LoadTexture("data/sprites/stage3.png");
+    levelIcon3G = LoadTexture("data/sprites/stage3g.png");
+    levelIcon4 = LoadTexture("data/sprites/stage4.png");
+    levelIcon4G = LoadTexture("data/sprites/stage4g.png");
 }
 
 void UnloadLevelSelect(){
@@ -43,7 +45,7 @@ void UnloadLevelSelect(){
     UnloadTexture(levelIcon4G);
 }
 
-void ProcessLevelSelect(){
+char ProcessLevelSelect(){
     if (IsKeyPressed(CONTROL_UP)){
         selectCursorY = 1;
         PlaySFX(SFX_CURSOR);
@@ -61,9 +63,15 @@ void ProcessLevelSelect(){
             PlaySFX(SFX_CURSOR);
         }
     } else if (IsKeyPressed(CONTROL_CANCEL)){
-        currentGameState = GAME_STATE_LEVEL;
+        // currentGameState = GAME_STATE_LEVEL;
+        if (selectCursorY == 1){
+            selectedLevel = 4;
+        }
+        selectedLevel = selectCursorX + 1;
         PlaySFX(SFX_CURSOR);
+        return 1;
     }
+    return 0;
 }
 
 void DrawLevelSelect(){

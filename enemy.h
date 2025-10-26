@@ -7,7 +7,7 @@
 #include "player.h"
 #include "camera.h"
 
-#define MAX_ENEMY_TYPE 1
+#define MAX_ENEMY_TYPE 16
 
 void LoadEnemyTextures();
 Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos);

@@ -6,6 +6,7 @@ void LoadProjectileTextures(){
     projectileTextures[PROJ_PLAYER_NORMAL] = LoadTexture("data/sprites/player_projectile0.png");
     projectileTextures[PROJ_BOSS1] = LoadTexture("data/sprites/boss_projectile1.png");
     projectileTextures[PROJ_BOSS1_2] = LoadTexture("data/sprites/boss_projectile2.png");
+    projectileTextures[PROJ_BOSS2] = LoadTexture("data/sprites/boss2_projectile.png");
 }
 
 // PROJ_PLAYER_NORMAL
@@ -94,6 +95,8 @@ void P2(Projectile *projectile, MapData *currentMap, Level *level, float deltaTi
     }
 }
 
+
+
 Projectile* MakeProjectile(PROJ_TYPE type, Vector2 pos, Vector2 velocity, Vector2 hitBoxSize, Vector2 hitBoxOffset, int facing){
     Projectile *temp = (Projectile *)malloc(sizeof(Projectile));
 
@@ -116,15 +119,21 @@ Projectile* MakeProjectile(PROJ_TYPE type, Vector2 pos, Vector2 velocity, Vector
     temp->dSpecial = 0.0;
 
     switch (type){
-        case PROJ_PLAYER_NORMAL:
+        default:
             temp->spriteSize = 72;
             break;
-        case PROJ_BOSS1:
-            temp->spriteSize = 72;
-            break;
-        case PROJ_BOSS1_2:
-            temp->spriteSize = 72;
-            break;
+        // case PROJ_PLAYER_NORMAL:
+        //     temp->spriteSize = 72;
+        //     break;
+        // case PROJ_BOSS1:
+        //     temp->spriteSize = 72;
+        //     break;
+        // case PROJ_BOSS1_2:
+        //     temp->spriteSize = 72;
+        //     break;
+        // case PROJ_BOSS2:
+        //     temp->spriteSize = 72;
+        //     break;
     }
 
     return temp;
@@ -139,6 +148,9 @@ void ProcessProjectile(Projectile *projectile, MapData *currentMap, Level *level
             P1(projectile, currentMap, level, deltaTime);
             break;
         case PROJ_BOSS1_2:
+            P2(projectile, currentMap, level, deltaTime);
+            break;
+        case PROJ_BOSS2:
             P2(projectile, currentMap, level, deltaTime);
             break;
     }

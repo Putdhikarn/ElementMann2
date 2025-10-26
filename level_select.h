@@ -6,9 +6,11 @@
 #include "audio.h"
 #include "control.h"
 
+extern char selectedLevel;
+
 void LoadLevelSelect();
 void UnloadLevelSelect();
-void ProcessLevelSelect();
+char ProcessLevelSelect();
 void DrawLevelSelect();
 
 #endif

@@ -48,7 +48,9 @@ void PlaySFX(GAME_SOUND sfx){
             PlaySound(sfxCursor);
             break;
         case SFX_JUMP:
-            PlaySound(sfxJump);
+            if (!IsSoundPlaying(sfxJump)){
+                PlaySound(sfxJump);
+            }
             break;
         case SFX_ATTACK:
             PlaySound(sfxAttack);
