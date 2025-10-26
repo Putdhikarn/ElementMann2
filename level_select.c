@@ -66,8 +66,9 @@ char ProcessLevelSelect(){
         // currentGameState = GAME_STATE_LEVEL;
         if (selectCursorY == 1){
             selectedLevel = 4;
+        } else {
+            selectedLevel = selectCursorX + 1;
         }
-        selectedLevel = selectCursorX + 1;
         PlaySFX(SFX_CURSOR);
         return 1;
     }

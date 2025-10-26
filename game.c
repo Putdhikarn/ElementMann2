@@ -55,10 +55,7 @@ void GameInit(){
 void InitSelectedLevel(char selected){
     G_PlayerProjCount = 0;
     player = LoadPlayer(17 * GAME_TILE_SIZE, 12 * GAME_TILE_SIZE);
-
-    currentMap = LoadMapDataFromFile("data/mapdata/map1.emp");
-    SetMapTileSet("data/tilesets/map1.png", currentMap, 48);
-
+    
     currentLevel = LoadLevel();
 
     currentLevel->camera->camera.target.x += 144;
@@ -80,18 +77,31 @@ void InitSelectedLevel(char selected){
     bossTrigger->hitBox = (Rectangle){bossTrigger->position.x, bossTrigger->position.y, 23 * GAME_TILE_SIZE, 3 * GAME_TILE_SIZE};
     AddEnemy(currentLevel, bossTrigger);
     bossTrigger = NULL;
-    TraceLog(LOG_INFO, TextFormat("%d", selected));
+
     switch (selected){
     case 1:
+        currentMap = LoadMapDataFromFile("data/mapdata/map2.emp");
+        SetMapTileSet("data/tilesets/map1.png", currentMap, 48);
+
         AddEnemy(currentLevel, MakeEnemy(EN_BOSS1, (Vector2){38 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
         break;
     case 2:
+        currentMap = LoadMapDataFromFile("data/mapdata/map2.emp");
+        SetMapTileSet("data/tilesets/map1.png", currentMap, 48);
+
         AddEnemy(currentLevel, MakeEnemy(EN_BOSS2, (Vector2){38 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
         break;
     case 3:
+        currentMap = LoadMapDataFromFile("data/mapdata/map2.emp");
+        SetMapTileSet("data/tilesets/map1.png", currentMap, 48);
+
         AddEnemy(currentLevel, MakeEnemy(EN_BOSS3, (Vector2){38 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
         break;
     case 4:
+        currentMap = LoadMapDataFromFile("data/mapdata/map2.emp");
+        SetMapTileSet("data/tilesets/map1.png", currentMap, 48);
+
+        AddEnemy(currentLevel, MakeEnemy(EN_BOSS4, (Vector2){36 * GAME_TILE_SIZE, 36 * GAME_TILE_SIZE}));
         break;
     }
 

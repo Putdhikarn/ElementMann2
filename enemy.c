@@ -10,6 +10,7 @@ void LoadEnemyTextures(){
     enemyTextures[EN_BOSS1] = LoadTexture("data/sprites/boss1.png");
     enemyTextures[EN_BOSS2] = LoadTexture("data/sprites/boss2.png");
     enemyTextures[EN_BOSS3] = LoadTexture("data/sprites/boss3.png");
+    enemyTextures[EN_BOSS4] = LoadTexture("data/sprites/boss4.png");
 }
 
 Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
@@ -459,7 +460,6 @@ void EP03(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     } 
     // normal process
     else if (!enemy->dead && enemy->active){
-        int attackRng = GetRandomValue(0, 256);
         switch (enemy->cSpecial){
             // wait state
             case 0:
@@ -658,6 +658,125 @@ void EP04(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     }
 }
 
+void EP05(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
+    // change game state to win if boos is dead
+    if (enemy->dead == 1 && enemy->type == EN_BOSS4) {
+        currentGameState = GAME_STATE_WIN;
+        return;
+    }
+    // invincibility check
+    DoEnemyInvCheck(enemy, deltaTime);
+    // spawn/Respawn enemy when on screen
+    if (IsRectOnScreen(enemy->hitBox, level->camera->camera) && !enemy->active && !enemy->dead){
+        enemy->active = 1;
+    } 
+    // despawn when off screen
+    else if ((!IsRectOnScreen(enemy->hitBox, level->camera->camera) && enemy->dead) || !IsRectOnScreenPartial(enemy->hitBox, level->camera->camera)){
+        enemy->active = 0;
+        enemy->dead = 0;
+    } 
+    // normal process
+    else if (!enemy->dead && enemy->active){
+        switch (enemy->cSpecial){
+            // walking state
+            case 0:
+
+                if (enemy->dSpecial >= 0.65 && (float)enemy->hp / (float)enemy->respawnHp < 0.55){
+                    enemy->cSpecial = 1;    // set to charge up state
+                    enemy->dSpecial = 0;
+                    enemy->spriteX = 0;
+                } else if (enemy->dSpecial >= 1.25){
+                    enemy->cSpecial = 1;
+                    enemy->dSpecial = 0;
+                    enemy->spriteX = 0;
+                } else {
+                    enemy->dSpecial += deltaTime;
+                }
+
+                if (enemy->iSpeical && (IsTileAtPositionBlocking(currentMap, enemy->hitBox.x - 8, enemy->hitBox.y + enemy->hitBox.height / 2.0))){
+                    enemy->iSpeical = 0;
+                } else if (!enemy->iSpeical && (IsTileAtPositionBlocking(currentMap, enemy->hitBox.x + enemy->hitBox.width + 8, enemy->hitBox.y + enemy->hitBox.height / 2.0))){
+                    enemy->iSpeical = 1;
+                }
+                if (enemy->iSpeical2 && (IsTileAtPositionBlocking(currentMap, enemy->hitBox.x + enemy->hitBox.width / 2.0, enemy->hitBox.y - 8) || enemy->position.y <= 29 * GAME_TILE_SIZE)){
+                    enemy->iSpeical2 = 0;
+                } else if (!enemy->iSpeical2 && (IsTileAtPositionBlocking(currentMap, enemy->hitBox.x + enemy->hitBox.width / 2.0, enemy->hitBox.y + enemy->hitBox.height + 8))){
+                    enemy->iSpeical2 = 1;
+                }
+
+                if (enemy->iSpeical){
+                    enemy->velocity.x = -560.0;
+                } else {
+                    enemy->velocity.x = 560.0;
+                }
+
+                if (enemy->iSpeical2){
+                    enemy->velocity.y = -560.0;
+                } else {
+                    enemy->velocity.y = 560.0;
+                }
+                ApplyEnemyVelocity(enemy, currentMap, deltaTime);
+                break;
+            // shoot circle state
+            case 2:
+                enemy->dSpecial = 0;
+                for (int i = 0; i <= 360; i += 36){
+                    Vector2 pDir = (Vector2){cos((double)i * (PI / 180.0)), sin((double)i * (PI / 180.0))};
+                    Vector2 pPos = (Vector2){enemy->hitBox.x + enemy->hitBox.width / 2, enemy->hitBox.y + enemy->hitBox.height / 2};
+                    Vector2 pVel = (Vector2){880.0, -880.0};
+                    pVel = Vector2Multiply(pVel, Vector2Normalize(pDir));
+                    AddProjectile(level, MakeProjectile(PROJ_BOSS4, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
+                }
+                enemy->cSpecial = 0;
+                break;
+        }
+        // Check collision with player
+        CheckCollisionWithPlayer(enemy, level);
+        // animation stuff
+        switch (enemy->cSpecial){
+            case 0:
+                 if (enemy->spriteTimer >= 0.1){
+                    enemy->spriteTimer = 0;
+                    enemy->spriteY = 0;
+                    if (enemy->spriteX == 4){
+                        enemy->spriteX = 0;
+                    } else {
+                        enemy->spriteX++;
+                    }
+                } else {
+                    enemy->spriteTimer += deltaTime;
+                }
+                break;
+            case 1:
+                if (enemy->spriteTimer >= 0.05){
+                    enemy->spriteTimer = 0;
+                    enemy->spriteY = 1;
+                    if (enemy->spriteX == 4){
+                        enemy->spriteX = 0;
+                        enemy->cSpecial = 2;
+                    } else {
+                        enemy->spriteX++;
+                    }
+                } else {
+                    enemy->spriteTimer += deltaTime;
+                }
+                break;
+        }
+       
+    }
+
+    // reinit enemy for respawn
+    else {
+        enemy->iSpeical = enemy->respawnPosition.x > level->player->position.x;
+        enemy->position = enemy->respawnPosition;
+        enemy->velocity.x = 0;
+        enemy->velocity.y = 0;
+        enemy->invincible = 0;
+        enemy->invTimer = 0.0;
+        enemy->hp = enemy->respawnHp;
+    }
+}
+
 void ProcessEnemy(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     switch (enemy->type){
         case EN_WALK:
@@ -676,7 +795,7 @@ void ProcessEnemy(Enemy *enemy, MapData *currentMap, Level *level, float deltaTi
             EP04(enemy, currentMap, level, deltaTime);
             break;
         case EN_BOSS4:
-            EP02(enemy, currentMap, level, deltaTime);
+            EP05(enemy, currentMap, level, deltaTime);
             break;
     }
 }

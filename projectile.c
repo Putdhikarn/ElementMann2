@@ -8,6 +8,7 @@ void LoadProjectileTextures(){
     projectileTextures[PROJ_BOSS1_2] = LoadTexture("data/sprites/boss_projectile2.png");
     projectileTextures[PROJ_BOSS2] = LoadTexture("data/sprites/boss2_projectile.png");
     projectileTextures[PROJ_BOSS3] = LoadTexture("data/sprites/boss3_projectile.png");
+    projectileTextures[PROJ_BOSS4] = LoadTexture("data/sprites/boss4_projectile.png");
 }
 
 // PROJ_PLAYER_NORMAL
@@ -191,6 +192,9 @@ void ProcessProjectile(Projectile *projectile, MapData *currentMap, Level *level
             break;
         case PROJ_BOSS3:
             P3(projectile, currentMap, level, deltaTime);
+            break;
+        case PROJ_BOSS4:
+            P2(projectile, currentMap, level, deltaTime);
             break;
     }
 }
