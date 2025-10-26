@@ -289,8 +289,16 @@ void EP01(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // change game state to win if boos is dead
     if (enemy->dead == 1 && enemy->type == EN_BOSS1) {
+        if (!levelBeat[0]){
+            levelBeat[0] = 1;
+            PlaySFX(SFX_WIN);
+            enemy->dSpecial = 0;
+            return;
+        } else if (enemy->dSpecial < 2.1){
+            enemy->dSpecial += deltaTime;
+            return;
+        }
         currentGameState = GAME_STATE_WIN;
-        levelBeat[0] = 1;
         return;        
     }
     // invincibility check
@@ -449,8 +457,16 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 void EP03(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // change game state to win if boos is dead
     if (enemy->dead == 1 && enemy->type == EN_BOSS2) {
+        if (!levelBeat[1]){
+            levelBeat[1] = 1;
+            PlaySFX(SFX_WIN);
+            enemy->dSpecial = 0;
+            return;
+        } else if (enemy->dSpecial < 2.1){
+            enemy->dSpecial += deltaTime;
+            return;
+        }
         currentGameState = GAME_STATE_WIN;
-        levelBeat[1] = 1;
         return;
     }
     // invincibility check
@@ -567,8 +583,16 @@ void EP03(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 void EP04(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // change game state to win if boos is dead
     if (enemy->dead == 1 && enemy->type == EN_BOSS3) {
+        if (!levelBeat[2]){
+            levelBeat[2] = 1;
+            PlaySFX(SFX_WIN);
+            enemy->dSpecial = 0;
+            return;
+        } else if (enemy->dSpecial < 2.1){
+            enemy->dSpecial += deltaTime;
+            return;
+        }
         currentGameState = GAME_STATE_WIN;
-        levelBeat[2] = 1;
         return;
     }
     // invincibility check
@@ -668,6 +692,15 @@ void EP04(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 void EP05(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // change game state to win if boos is dead
     if (enemy->dead == 1 && enemy->type == EN_BOSS4) {
+        if (!levelBeat[3]){
+            levelBeat[3] = 1;
+            PlaySFX(SFX_WIN_END);
+            enemy->dSpecial = 0;
+            return;
+        } else if (enemy->dSpecial < 5.1){
+            enemy->dSpecial += deltaTime;
+            return;
+        }
         currentGameState = GAME_STATE_WIN;
         return;
     }

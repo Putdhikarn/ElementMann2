@@ -8,7 +8,9 @@ typedef enum {
     SFX_CURSOR,
     SFX_JUMP,
     SFX_ATTACK,
-    SFX_PLAYER_DEAD
+    SFX_PLAYER_DEAD,
+    SFX_WIN,
+    SFX_WIN_END
 } GAME_SOUND;
 
 void LoadAudio();

@@ -154,6 +154,6 @@ typedef struct Level{
 
 extern int G_PlayerProjCount;
 extern GAME_STATE currentGameState;
-extern char levelBeat[3];
+extern char levelBeat[4];
 
 #endif

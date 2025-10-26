@@ -5,6 +5,9 @@ Sound sfxJump;
 Sound sfxAttack;
 Sound sfxPlayerDead;
 
+Sound sfxWin;
+Sound sfxWinEnd;
+
 Music bgmStream;
 
 void LoadAudio(){
@@ -12,6 +15,9 @@ void LoadAudio(){
     sfxJump = LoadSound("data/audio/sfx_jump.ogg");
     sfxAttack = LoadSound("data/audio/sfx_attack.ogg");
     sfxPlayerDead = LoadSound("data/audio/sfx_player_dead.ogg");
+
+    sfxWin = LoadSound("data/audio/sfx_win.ogg");
+    sfxWinEnd = LoadSound("data/audio/sfx_win_end.ogg");
 
     bgmStream = LoadMusicStream("data/audio/bgm_main.ogg");
 }
@@ -25,6 +31,8 @@ void UnloadAudio(){
     UnloadSound(sfxJump);
     UnloadSound(sfxAttack);
     UnloadSound(sfxPlayerDead);
+    UnloadSound(sfxWin);
+    UnloadSound(sfxWinEnd);
     UnloadMusicStream(bgmStream);
 }
 
@@ -57,6 +65,12 @@ void PlaySFX(GAME_SOUND sfx){
             break;
         case SFX_PLAYER_DEAD:
             PlaySound(sfxPlayerDead);
+            break;
+        case SFX_WIN:
+            PlaySound(sfxWin);
+            break;
+        case SFX_WIN_END:
+            PlaySound(sfxWinEnd);
             break;
     }
     
