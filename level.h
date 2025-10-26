@@ -7,7 +7,7 @@
 #include "enemy.h"
 
 
-Level* LoadLevel();
+Level* LoadLevel(char id);
 void UnloadLevel(Level *level);
 
 void AddProjectile(Level *level, Projectile *toAdd);

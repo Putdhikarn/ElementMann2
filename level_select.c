@@ -64,23 +64,45 @@ char ProcessLevelSelect(){
         }
     } else if (IsKeyPressed(CONTROL_CANCEL)){
         // currentGameState = GAME_STATE_LEVEL;
-        if (selectCursorY == 1){
+        if (selectCursorY == 1 && levelBeat[0] && levelBeat[1] && levelBeat[2]){
             selectedLevel = 4;
-        } else {
-            selectedLevel = selectCursorX + 1;
+            return 1;
+        } else if (selectCursorY == 0){
+            if (!levelBeat[selectCursorX]){
+                selectedLevel = selectCursorX + 1;
+                PlaySFX(SFX_CURSOR);
+                return 1;
+            }
+            return 0;
         }
-        PlaySFX(SFX_CURSOR);
-        return 1;
     }
     return 0;
 }
 
 void DrawLevelSelect(){
     DrawTexture(levelSelectText, 7 * GAME_TILE_SIZE, GAME_TILE_SIZE, WHITE);
-    DrawTexture(levelIcon1, 5 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
-    DrawTexture(levelIcon2, 11 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
-    DrawTexture(levelIcon3, 17 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
-    DrawTexture(levelIcon4, 11 * GAME_TILE_SIZE, 3 * GAME_TILE_SIZE, WHITE);
+    if (levelBeat[0]){
+        DrawTexture(levelIcon1G, 5 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
+    } else {
+        DrawTexture(levelIcon1, 5 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
+    }
+
+    if (levelBeat[1]){
+        DrawTexture(levelIcon2G, 11 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
+    } else {
+        DrawTexture(levelIcon2, 11 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
+    }
+
+    if (levelBeat[2]){
+        DrawTexture(levelIcon3G, 17 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
+    } else {
+        DrawTexture(levelIcon3, 17 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
+    }
+    if (levelBeat[0] & levelBeat[1] && levelBeat[2]){
+        DrawTexture(levelIcon4, 11 * GAME_TILE_SIZE, 3 * GAME_TILE_SIZE, WHITE);
+    } else {
+        DrawTexture(levelIcon4G, 11 * GAME_TILE_SIZE, 3 * GAME_TILE_SIZE, WHITE);
+    }
     if (selectCursorY == 1){
         DrawTexture(levelSelectCursor, 11 * GAME_TILE_SIZE, 3 * GAME_TILE_SIZE, WHITE);
     } else {

@@ -13,6 +13,8 @@
 #include "main_menu.h"
 #include "level_select.h"
 #include "audio.h"
+#include "win_screen.h"
+#include "password.h"
 #include <stdio.h>
 
 #define PIXEL_SCALE_FACTOR 3.0

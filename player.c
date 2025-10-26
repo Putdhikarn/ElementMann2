@@ -346,4 +346,5 @@ void UnloadPlayer(Player *player){
     UnloadTexture(player->spritesNormal);
     UnloadTexture(player->spritesNormalInvincible);
     free(player);
+    player = NULL;
 }

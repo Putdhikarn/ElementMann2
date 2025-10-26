@@ -1,6 +1,9 @@
 #ifndef WIN_SCREEN_H
 #define WIN_SCREEN_H
 
+#include "game_struct.h"
+#include "control.h"
+#include "game_def.h"
 #include "include/raylib.h"
 #include "game_struct.h"
 
@@ -17,11 +20,6 @@ typedef struct {
     int moveSpriteAnimId;
     int lastMoveSpriteAnimId;
 } WinScreen;
-
-void WinScreen_Init(WinScreen *ws);
-void WinScreen_Update(WinScreen *ws);
-void WinScreen_Draw(WinScreen *ws, Level *level);
-void WinScreen_Unload(WinScreen *ws);
 
 void LoadWinScreen();
 void ProcessWinScreen();

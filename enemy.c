@@ -58,7 +58,8 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->hitBoxOffset = (Vector2){27, 21};
             temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
             temp->spriteSize = 96;
-            temp->hp = 24;
+            // temp->hp = 24;
+            temp->hp = 1;
             temp->respawnHp = temp->hp;
             temp->cSpecial = 0;
             temp->iSpeical = 1;
@@ -69,7 +70,8 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->hitBoxOffset = (Vector2){27, 21};
             temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
             temp->spriteSize = 96;
-            temp->hp = 24;
+            // temp->hp = 24;
+            temp->hp = 1;
             temp->respawnHp = temp->hp;
             temp->cSpecial = 0;
             temp->iSpeical = 1;
@@ -80,7 +82,8 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->hitBoxOffset = (Vector2){27, 21};
             temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
             temp->spriteSize = 96;
-            temp->hp = 24;
+            // temp->hp = 24;
+            temp->hp = 1;
             temp->respawnHp = temp->hp;
             temp->cSpecial = 0;
             temp->iSpeical = 1;
@@ -91,7 +94,8 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->hitBoxOffset = (Vector2){27, 21};
             temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
             temp->spriteSize = 96;
-            temp->hp = 56;
+            // temp->hp = 56;
+            temp->hp = 1;
             temp->respawnHp = temp->hp;
             temp->cSpecial = 0;
             temp->iSpeical = 1;
@@ -286,7 +290,8 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // change game state to win if boos is dead
     if (enemy->dead == 1 && enemy->type == EN_BOSS1) {
         currentGameState = GAME_STATE_WIN;
-        return;
+        levelBeat[0] = 1;
+        return;        
     }
     // invincibility check
     DoEnemyInvCheck(enemy, deltaTime);
@@ -445,6 +450,7 @@ void EP03(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // change game state to win if boos is dead
     if (enemy->dead == 1 && enemy->type == EN_BOSS2) {
         currentGameState = GAME_STATE_WIN;
+        levelBeat[1] = 1;
         return;
     }
     // invincibility check
@@ -562,6 +568,7 @@ void EP04(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // change game state to win if boos is dead
     if (enemy->dead == 1 && enemy->type == EN_BOSS3) {
         currentGameState = GAME_STATE_WIN;
+        levelBeat[2] = 1;
         return;
     }
     // invincibility check

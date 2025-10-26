@@ -1,7 +1,8 @@
 #include "level.h"
 
-Level* LoadLevel(){
+Level* LoadLevel(char id){
     Level *temp = (Level *)malloc(sizeof(Level));
+    temp->levelId = id;
     for (int i = 0 ;i < sizeof(temp->projectiles) / sizeof(Projectile *); i++){
         temp->projectiles[i] = NULL;
     }

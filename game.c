@@ -1,17 +1,15 @@
 #include "game.h"
 #include "map.h"
-#include "win_screen.h"
 
-
-Player *player;
-MapData *currentMap;
+Player *player = NULL;
+MapData *currentMap = NULL;
 // Camera2D camera;
 
 Texture2D playerHpBar;
 
 float deltaTime;
 
-Level *currentLevel;
+Level *currentLevel = NULL;
 
 // Init the Game
 void GameInit(){
@@ -19,6 +17,7 @@ void GameInit(){
     LoadMainMenu();
     LoadLevelSelect();
     LoadWinScreen();
+    LoadPasswordSelect();
     SetRandomSeed(451);
     // G_PlayerProjCount = 0;
     // player = LoadPlayer(17 * GAME_TILE_SIZE, 12 * GAME_TILE_SIZE);
@@ -53,10 +52,21 @@ void GameInit(){
 }
 
 void InitSelectedLevel(char selected){
+
+    if (player != NULL){
+        UnloadPlayer(player);
+    }
+    if (currentLevel != NULL){
+        UnloadLevel(currentLevel);
+    }
+    if (currentMap != NULL){
+        UnloadMapData(currentMap);
+    }
+
     G_PlayerProjCount = 0;
     player = LoadPlayer(17 * GAME_TILE_SIZE, 12 * GAME_TILE_SIZE);
     
-    currentLevel = LoadLevel();
+    currentLevel = LoadLevel(selected);
 
     currentLevel->camera->camera.target.x += 144;
     currentLevel->camera->camera.target.y += 144;
@@ -124,6 +134,7 @@ void GameLoop(){
             }
             break;
         case GAME_STATE_PASSWORD:
+            ProcessPasswordSelect();
             break;
         case GAME_STATE_LEVEL:
             // Unload Stuff that needs to be unloaded Down Here...
@@ -155,6 +166,7 @@ void GameLoop(){
             DrawLevelSelect();
             break;
         case GAME_STATE_PASSWORD:
+            DrawPasswordSelect();
             break;
         case GAME_STATE_LEVEL:
             BeginMode2D(currentLevel->camera->camera);
@@ -193,12 +205,20 @@ void GameLoop(){
 void GameCleanUp(){
     UnloadMainMenu();
     UnloadLevelSelect();
-    UnloadPlayer(player);
+    
     UnloadProjectileTextures();
     UnloadEnemyTextures();
     UnloadTexture(playerHpBar);
-    UnloadLevel(currentLevel);
+
+    if (player != NULL){
+        UnloadPlayer(player);
+    }
+    if (currentLevel != NULL){
+        UnloadLevel(currentLevel);
+    }
+
     UnloadAudio();
     UnloadWinScreen();
+    UnloadPasswordSelect();
     // UnloadMapData(currentMap);
 }

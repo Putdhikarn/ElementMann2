@@ -1,55 +1,37 @@
 #include "win_screen.h"
-#include "game_struct.h"
-#include "game_def.h"
 
-extern Level *currentLevel;
-static WinScreen winScreenInstance;
+static WinScreen winScreen;
 
-void WinScreen_Init(WinScreen *ws) {
-    ws->panel = LoadTexture("data/sprites/win_panel.png");
-    ws->bgAnimId = 0;
-    ws->bgFrame = 0;
+void LoadWinScreen() {
+    winScreen.panel = LoadTexture("data/sprites/win_panel.png");
+    winScreen.passwordDot = LoadTexture("data/sprites/password_dot.png");
+    winScreen.bgAnimId = 0;
+    winScreen.bgFrame = 0;
 }
 
-void WinScreen_Update(WinScreen *ws) {
-    if (IsKeyPressed(KEY_X)) {
-        currentLevel->player->position = currentLevel->player->respawnPosition;
-        currentLevel->camera->camera.target = currentLevel->player->position;
-        currentLevel->camera->followPlayer = 1;
+void ProcessWinScreen() {
+    if (IsKeyPressed(CONTROL_CANCEL)) {
         currentGameState = GAME_STATE_LEVEL_SELECT;
     }
 }
 
-void WinScreen_Draw(WinScreen *ws, Level *level) {
-    ClearBackground(BLACK);
-    DrawTexturePro(
-        ws->panel,
-        (Rectangle){0, 0, ws->panel.width, ws->panel.height},
-        (Rectangle){0, 0, SCREEN_WIDTH, SCREEN_HEIGHT},
-        (Vector2){0, 0},
-        0.0f,
-        WHITE
-    );
-}
-
-void WinScreen_Unload(WinScreen *ws) {
-    UnloadTexture(ws->panel);
-}
-
-// wrapper
-void LoadWinScreen() {
-    WinScreen_Init(&winScreenInstance);
-}
-
-void ProcessWinScreen() {
-    WinScreen_Update(&winScreenInstance);
-}
-
 void DrawWinScreen() {
-    extern Level *currentLevel;
-    WinScreen_Draw(&winScreenInstance, currentLevel);
+    DrawTexture(winScreen.panel, 0 * GAME_TILE_SIZE, 0 * GAME_TILE_SIZE, WHITE);
+    if (levelBeat[0]){
+        DrawTexture(winScreen.passwordDot, (15 + 0) * GAME_TILE_SIZE, (5 + 4) * GAME_TILE_SIZE, WHITE);
+        DrawTexture(winScreen.passwordDot, (15 + 1) * GAME_TILE_SIZE, (5 + 1) * GAME_TILE_SIZE, WHITE);
+    }
+    if (levelBeat[1]){
+        DrawTexture(winScreen.passwordDot, (15 + 0) * GAME_TILE_SIZE, (5 + 3) * GAME_TILE_SIZE, WHITE);
+        DrawTexture(winScreen.passwordDot, (15 + 3) * GAME_TILE_SIZE, (5 + 4) * GAME_TILE_SIZE, WHITE);
+    }
+    if (levelBeat[2]){
+        DrawTexture(winScreen.passwordDot, (15 + 4) * GAME_TILE_SIZE, (5 + 3) * GAME_TILE_SIZE, WHITE);
+        DrawTexture(winScreen.passwordDot, (15 + 2) * GAME_TILE_SIZE, (5 + 2) * GAME_TILE_SIZE, WHITE);
+    }
 }
 
 void UnloadWinScreen() {
-    WinScreen_Unload(&winScreenInstance);
+    UnloadTexture(winScreen.panel);
+    UnloadTexture(winScreen.passwordDot);
 }

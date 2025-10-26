@@ -90,6 +90,7 @@ void UnloadMapData(MapData *mapData){
         free(mapData->mapData);
     }
     free(mapData);
+    mapData = NULL;
 }
 
 int IsTileAtPositionBlocking(MapData *mapData, float worldX, float worldY){

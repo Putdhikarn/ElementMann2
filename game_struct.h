@@ -142,6 +142,7 @@ typedef struct GameCamera{
 } GameCamera;
 
 typedef struct Level{
+    char levelId;
     GameCamera *camera;
     Projectile *projectiles[256];
     Enemy *enemies[64];
@@ -152,5 +153,6 @@ typedef struct Level{
 
 extern int G_PlayerProjCount;
 extern GAME_STATE currentGameState;
+extern char levelBeat[3];
 
 #endif
