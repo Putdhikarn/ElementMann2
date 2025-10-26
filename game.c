@@ -89,10 +89,9 @@ void InitSelectedLevel(char selected){
         AddEnemy(currentLevel, MakeEnemy(EN_BOSS2, (Vector2){38 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
         break;
     case 3:
-        /* code */
+        AddEnemy(currentLevel, MakeEnemy(EN_BOSS3, (Vector2){38 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
         break;
     case 4:
-        /* code */
         break;
     }
 

@@ -7,6 +7,7 @@ void LoadProjectileTextures(){
     projectileTextures[PROJ_BOSS1] = LoadTexture("data/sprites/boss_projectile1.png");
     projectileTextures[PROJ_BOSS1_2] = LoadTexture("data/sprites/boss_projectile2.png");
     projectileTextures[PROJ_BOSS2] = LoadTexture("data/sprites/boss2_projectile.png");
+    projectileTextures[PROJ_BOSS3] = LoadTexture("data/sprites/boss3_projectile.png");
 }
 
 // PROJ_PLAYER_NORMAL
@@ -95,6 +96,41 @@ void P2(Projectile *projectile, MapData *currentMap, Level *level, float deltaTi
     }
 }
 
+//PROJ_BOSS3
+void P3(Projectile *projectile, MapData *currentMap, Level *level, float deltaTime){
+
+    projectile->dSpecial += deltaTime;
+    if (projectile->dSpecial >= 0.35){
+        projectile->velocity.y *= -1.0;
+        projectile->dSpecial = 0;
+    }
+
+    projectile->position.x += projectile->velocity.x * deltaTime;
+    projectile->position.y += projectile->velocity.y * deltaTime;
+    projectile->hitBox.x = projectile->position.x + projectile->hitBoxOffset.x;
+    projectile->hitBox.y = projectile->position.y + projectile->hitBoxOffset.y;
+
+    
+
+    Vector2 screenPos = GetWorldToScreen2D(projectile->position, level->camera->camera);
+    // Check collision with player
+
+    if (level->player != NULL){
+        if (CheckCollisionRecs(projectile->hitBox, level->player->hitBox)){
+            if (!projectile->hitSomething && !level->player->invincible && level->player->alive){
+                projectile->hitSomething = 1;
+                projectile->toBeUnload = 1;
+                DoPlayerHit(level->player, (Vector2){projectile->hitBox.x + projectile->hitBox.width / 2, projectile->hitBox.y + projectile->hitBox.height / 2});
+            }
+        }
+    }
+
+    // Unload projectile if offscreen
+    if (screenPos.x < -projectile->spriteSize || screenPos.x > SCREEN_WIDTH + projectile->spriteSize || screenPos.y < -projectile->spriteSize || screenPos.y > SCREEN_HEIGHT + projectile->spriteSize){
+        projectile->toBeUnload = 1;
+    }
+}
+
 
 
 Projectile* MakeProjectile(PROJ_TYPE type, Vector2 pos, Vector2 velocity, Vector2 hitBoxSize, Vector2 hitBoxOffset, int facing){
@@ -152,6 +188,9 @@ void ProcessProjectile(Projectile *projectile, MapData *currentMap, Level *level
             break;
         case PROJ_BOSS2:
             P2(projectile, currentMap, level, deltaTime);
+            break;
+        case PROJ_BOSS3:
+            P3(projectile, currentMap, level, deltaTime);
             break;
     }
 }

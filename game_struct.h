@@ -29,7 +29,9 @@ typedef enum {
     PROJ_PLAYER_NORMAL,
     PROJ_BOSS1,
     PROJ_BOSS1_2,
-    PROJ_BOSS2
+    PROJ_BOSS2,
+    PROJ_BOSS3,
+    PROJ_BOSS4
 } PROJ_TYPE;
 
 typedef struct Projectile{

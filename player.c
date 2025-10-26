@@ -310,7 +310,7 @@ void AnimatePlayerSprite(Player *player, float deltaTime){
 void DoPlayerHit(Player *player, Vector2 hitPos){
     if (player->invincible == 0){
         player->velocity.x = 0;
-        if (hitPos.x < player->position.x + 36){
+        if (hitPos.x < player->hitBox.x + player->hitBox.width / 2){
             player->velocity.x = KNOCK_BACK_FORCE;
         } else {
             player->velocity.x = -KNOCK_BACK_FORCE;       
