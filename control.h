@@ -9,5 +9,6 @@
 #define CONTROL_DOWN KEY_DOWN
 #define CONTROL_CONFIRM KEY_Z
 #define CONTROL_CANCEL KEY_X
+#define CONTROL_PAUSE KEY_C
 
 #endif

@@ -11,7 +11,7 @@
 
 void LoadEnemyTextures();
 Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos);
-void DoEnemyHit(Enemy *enemy, Vector2 hitPos, int elementType);
+void DoEnemyHit(Enemy *enemy, Vector2 hitPos, Element elementType);
 void ProcessEnemy(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime);
 void DrawEnemy(Enemy *enemy);
 void UnloadEnemy(Enemy *enemy);

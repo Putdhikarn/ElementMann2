@@ -1,11 +1,17 @@
 #include "game.h"
-#include "map.h"
 
 Player *player = NULL;
 MapData *currentMap = NULL;
 // Camera2D camera;
 
+Texture2D dummyText33; // fix memory bug for some reason...
+
 Texture2D playerHpBar;
+Texture2D playerElBar1;
+Texture2D playerElBar2;
+Texture2D playerElBar3;
+
+Texture2D dummyText34; // fix memory bug for some reason...
 
 float deltaTime;
 
@@ -18,6 +24,7 @@ void GameInit(){
     LoadLevelSelect();
     LoadWinScreen();
     LoadPasswordSelect();
+    LoadPauseMenu();
     SetRandomSeed(451);
     // G_PlayerProjCount = 0;
     // player = LoadPlayer(17 * GAME_TILE_SIZE, 12 * GAME_TILE_SIZE);
@@ -139,6 +146,12 @@ void GameLoop(){
         case GAME_STATE_LEVEL:
             // Unload Stuff that needs to be unloaded Down Here...
             CleanUpProjectile(currentLevel);
+            // Check For Pause Here
+            if (IsKeyPressed(CONTROL_PAUSE)){
+                currentGameState = GAME_STATE_PAUSED;
+                break;
+            }
+
             ProcessPlayer(player, currentMap, currentLevel, deltaTime);
             ProcessLevelEnemy(currentLevel, currentMap, deltaTime);
             ProcessLevelProjectile(currentLevel, currentMap, deltaTime);
@@ -148,8 +161,11 @@ void GameLoop(){
                 InterpolateCameraToPos(currentLevel->camera, (Vector2){player->position.x + 36, player->position.y + 36}, 16.0, deltaTime);
             }
             break;
+        case GAME_STATE_PAUSED:
+            ProcessPauseMeun(player);
+            break;
         case GAME_STATE_WIN:
-            ProcessWinScreen();
+            ProcessWinScreen(deltaTime);
             break;
 
     }
@@ -188,9 +204,33 @@ void GameLoop(){
             EndMode2D();
             // Draw Screenspace Stuff (UI)
             DrawTextureRec(playerHpBar, (Rectangle){0, 0, player->hp * 18, 48}, (Vector2){GAME_TILE_SIZE, GAME_TILE_SIZE}, WHITE);
+            switch (player->element)
+            {
+                case EL_ELECTRIC:
+                    DrawTextureRec(elementBar2, (Rectangle){0, 0, (player->elPower1 / 8) * 18, 48}, (Vector2){GAME_TILE_SIZE, 3 * GAME_TILE_SIZE}, WHITE);
+                    break;
+                case EL_EARTH:
+                    DrawTextureRec(elementBar3, (Rectangle){0, 0, (player->elPower2 / 8) * 18, 48}, (Vector2){GAME_TILE_SIZE, 3 * GAME_TILE_SIZE}, WHITE);
+                    break;
+                case EL_WATER:
+                    DrawTextureRec(elementBar4, (Rectangle){0, 0, (player->elPower3 / 8) * 18, 48}, (Vector2){GAME_TILE_SIZE, 3 * GAME_TILE_SIZE}, WHITE);
+                    break;
+            }
             // DrawText("It works!", 20, 20, 20, WHITE);
-            DrawFPS(1000, 100);
-            DrawText(TextFormat("%f", deltaTime), 100, 100, 20, WHITE);
+            // DrawFPS(1000, 100);
+            // DrawText(TextFormat("%f", deltaTime), 100, 100, 20, WHITE);
+            break;
+        case GAME_STATE_PAUSED:
+            BeginMode2D(currentLevel->camera->camera);
+            DrawMap(currentMap);
+            DrawPlayer(player);
+            DrawLevelEnemy(currentLevel);
+            DrawLevelProjectile(currentLevel);
+            EndMode2D();
+            // Draw Screenspace Stuff (UI)
+            DrawTextureRec(playerHpBar, (Rectangle){0, 0, player->hp * 18, 48}, (Vector2){GAME_TILE_SIZE, GAME_TILE_SIZE}, WHITE);
+            // Pause menu sit of top of everything else
+            DrawPauseMenu();
             break;
         case GAME_STATE_WIN:
             DrawWinScreen();
@@ -220,5 +260,6 @@ void GameCleanUp(){
     UnloadAudio();
     UnloadWinScreen();
     UnloadPasswordSelect();
+    UnloadPauseMenu();
     // UnloadMapData(currentMap);
 }

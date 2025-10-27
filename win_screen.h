@@ -14,15 +14,18 @@ typedef struct {
     Texture2D fire;
     Texture2D grass;
 
+    Texture2D elPrev1;
+    Texture2D elPrev2;
+    Texture2D elPrev3;
+
     int bgAnimId;
     int bgFrame;
     int spriteAnimateFrame;
-    int moveSpriteAnimId;
-    int lastMoveSpriteAnimId;
+    double spriteAnimTimer;
 } WinScreen;
 
 void LoadWinScreen();
-void ProcessWinScreen();
+void ProcessWinScreen(double delta);
 void DrawWinScreen();
 void UnloadWinScreen();
 

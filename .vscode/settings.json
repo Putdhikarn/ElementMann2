@@ -28,6 +28,8 @@
         "main_menu.h": "c",
         "level_select.h": "c",
         "audio.h": "c",
-        "win_screen.h": "c"
+        "win_screen.h": "c",
+        "raymath.h": "c",
+        "password.h": "c"
     }
 }

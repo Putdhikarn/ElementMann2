@@ -10,6 +10,9 @@ void LoadProjectileTextures(){
     projectileTextures[PROJ_BOSS3] = LoadTexture("data/sprites/boss3_projectile.png");
     projectileTextures[PROJ_BOSS4] = LoadTexture("data/sprites/boss4_projectile.png");
     projectileTextures[PROJ_PDEAD] = LoadTexture("data/sprites/death_effect.png");
+    projectileTextures[PROJ_PLAYER_ELEC] = LoadTexture("data/sprites/player_projectile1.png");
+    projectileTextures[PROJ_PLAYER_EARTH] = LoadTexture("data/sprites/player_projectile2.png");
+    projectileTextures[PROJ_PLAYER_WATER] = LoadTexture("data/sprites/player_projectile3.png");
 }
 
 // PROJ_PLAYER_NORMAL
@@ -27,7 +30,7 @@ void P0(Projectile *projectile, MapData *currentMap, Level *level, float deltaTi
                 if (!level->enemies[i]->dead && level->enemies[i]->active && !projectile->hitSomething){
                     projectile->hitSomething = 1;
                     projectile->toBeUnload = 1;
-                    DoEnemyHit(level->enemies[i], projectile->position, 0);
+                    DoEnemyHit(level->enemies[i], projectile->position, projectile->element);
                 }
             }
         }
@@ -158,6 +161,19 @@ Projectile* MakeProjectile(PROJ_TYPE type, Vector2 pos, Vector2 velocity, Vector
 
     switch (type){
         default:
+            temp->element = EL_NORMAL;
+            temp->spriteSize = 72;
+            break;
+        case PROJ_PLAYER_WATER:
+            temp->element = EL_WATER;
+            temp->spriteSize = 96;
+            break;
+        case PROJ_PLAYER_EARTH:
+            temp->element = EL_EARTH;
+            temp->spriteSize = 72;
+            break;
+        case PROJ_PLAYER_ELEC:
+            temp->element = EL_ELECTRIC;
             temp->spriteSize = 72;
             break;
         // case PROJ_PLAYER_NORMAL:
@@ -200,6 +216,15 @@ void ProcessProjectile(Projectile *projectile, MapData *currentMap, Level *level
         case PROJ_PDEAD:
             P2(projectile, currentMap, level, deltaTime);
             break;
+        case PROJ_PLAYER_ELEC:
+            P0(projectile, currentMap, level, deltaTime);
+            break;
+        case PROJ_PLAYER_EARTH:
+            P0(projectile, currentMap, level, deltaTime);
+            break;
+        case PROJ_PLAYER_WATER:
+            P0(projectile, currentMap, level, deltaTime);
+            break;
     }
 }
 
@@ -213,7 +238,7 @@ void DrawProjectile(Projectile *projectile){
 
 void UnloadProjectile(Projectile *projectile){
     if (projectile){
-        if (projectile->type == 0){
+        if (projectile->type == PROJ_PLAYER_NORMAL || projectile->type == PROJ_PLAYER_ELEC || projectile->type == PROJ_PLAYER_EARTH || projectile->type == PROJ_PLAYER_WATER){
             G_PlayerProjCount--;
         }
         free(projectile);

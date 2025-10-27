@@ -160,11 +160,23 @@ void ApplyEnemyVelocity(Enemy *enemy, MapData *currentMap, float deltaTime){
     enemy->hitBox.y = enemy->position.y + enemy->hitBoxOffset.y;
 }
 
-void DoEnemyHit(Enemy *enemy, Vector2 hitPos, int elementType){
+void DoEnemyHit(Enemy *enemy, Vector2 hitPos, Element elementType){
     if (enemy->invincible == 0){
         enemy->invincible = 1;
         enemy->invTimer = 0.0;
-        enemy->hp--;
+        
+        if (enemy->type == EN_BOSS1 && elementType == EL_EARTH){
+            enemy->hp -= 2;
+        } else if (enemy->type == EN_BOSS2 && elementType == EL_WATER){
+            enemy->hp -= 4;
+        } else if (enemy->type == EN_BOSS3 && elementType == EL_ELECTRIC){
+            enemy->hp -= 2;
+        } else if (enemy->type == EN_BOSS4 && elementType != EL_NORMAL){
+            enemy->hp -= 2;
+        } else {
+            enemy->hp--;
+        }
+        
         if (enemy->hp <= 0){
             if (!enemy->respawnable){
                 enemy->toBeUnload = 1;
@@ -290,9 +302,19 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // change game state to win if boos is dead
     if (enemy->dead == 1 && enemy->type == EN_BOSS1) {
         if (!levelBeat[0]){
+            lastLevel = 0;
             levelBeat[0] = 1;
             PlaySFX(SFX_WIN);
             enemy->dSpecial = 0;
+            // spawn death effect
+            PlaySFX(SFX_PLAYER_DEAD);
+            for (int i = 0; i <= 360; i += 36){
+                Vector2 pDir = (Vector2){cos((double)i * (PI / 180.0)), sin((double)i * (PI / 180.0))};
+                Vector2 pPos = (Vector2){enemy->hitBox.x + enemy->hitBox.width / 2, enemy->hitBox.y + enemy->hitBox.height / 2};
+                Vector2 pVel = (Vector2){1000.0, -1000.0};
+                pVel = Vector2Multiply(pVel, Vector2Normalize(pDir));
+                AddProjectile(level, MakeProjectile(PROJ_PDEAD, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
+            }
             return;
         } else if (enemy->dSpecial < 2.1){
             enemy->dSpecial += deltaTime;
@@ -458,8 +480,18 @@ void EP03(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     // change game state to win if boos is dead
     if (enemy->dead == 1 && enemy->type == EN_BOSS2) {
         if (!levelBeat[1]){
+            lastLevel = 1;
             levelBeat[1] = 1;
             PlaySFX(SFX_WIN);
+            // spawn death effect
+            PlaySFX(SFX_PLAYER_DEAD);
+            for (int i = 0; i <= 360; i += 36){
+                Vector2 pDir = (Vector2){cos((double)i * (PI / 180.0)), sin((double)i * (PI / 180.0))};
+                Vector2 pPos = (Vector2){enemy->hitBox.x + enemy->hitBox.width / 2, enemy->hitBox.y + enemy->hitBox.height / 2};
+                Vector2 pVel = (Vector2){1000.0, -1000.0};
+                pVel = Vector2Multiply(pVel, Vector2Normalize(pDir));
+                AddProjectile(level, MakeProjectile(PROJ_PDEAD, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
+            }
             enemy->dSpecial = 0;
             return;
         } else if (enemy->dSpecial < 2.1){
@@ -585,7 +617,17 @@ void EP04(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     if (enemy->dead == 1 && enemy->type == EN_BOSS3) {
         if (!levelBeat[2]){
             levelBeat[2] = 1;
+            lastLevel = 2;
             PlaySFX(SFX_WIN);
+            // spawn death effect
+            PlaySFX(SFX_PLAYER_DEAD);
+            for (int i = 0; i <= 360; i += 36){
+                Vector2 pDir = (Vector2){cos((double)i * (PI / 180.0)), sin((double)i * (PI / 180.0))};
+                Vector2 pPos = (Vector2){enemy->hitBox.x + enemy->hitBox.width / 2, enemy->hitBox.y + enemy->hitBox.height / 2};
+                Vector2 pVel = (Vector2){1000.0, -1000.0};
+                pVel = Vector2Multiply(pVel, Vector2Normalize(pDir));
+                AddProjectile(level, MakeProjectile(PROJ_PDEAD, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
+            }
             enemy->dSpecial = 0;
             return;
         } else if (enemy->dSpecial < 2.1){
@@ -694,7 +736,17 @@ void EP05(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
     if (enemy->dead == 1 && enemy->type == EN_BOSS4) {
         if (!levelBeat[3]){
             levelBeat[3] = 1;
+            lastLevel = 3;
             PlaySFX(SFX_WIN_END);
+            // spawn death effect
+            PlaySFX(SFX_PLAYER_DEAD);
+            for (int i = 0; i <= 360; i += 36){
+                Vector2 pDir = (Vector2){cos((double)i * (PI / 180.0)), sin((double)i * (PI / 180.0))};
+                Vector2 pPos = (Vector2){enemy->hitBox.x + enemy->hitBox.width / 2, enemy->hitBox.y + enemy->hitBox.height / 2};
+                Vector2 pVel = (Vector2){1000.0, -1000.0};
+                pVel = Vector2Multiply(pVel, Vector2Normalize(pDir));
+                AddProjectile(level, MakeProjectile(PROJ_PDEAD, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
+            }
             enemy->dSpecial = 0;
             return;
         } else if (enemy->dSpecial < 5.1){

@@ -75,6 +75,9 @@ char ProcessLevelSelect(){
             }
             return 0;
         }
+    } else if (IsKeyPressed(CONTROL_PAUSE)){
+        currentGameState = GAME_STATE_MAIN_MENU;
+        PlayBGM(BGM_MAIN);
     }
     return 0;
 }

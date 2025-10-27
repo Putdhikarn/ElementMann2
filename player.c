@@ -26,8 +26,18 @@ Level* playerLevelPointer = NULL;
 
 Player* LoadPlayer(float topLeftX, float topLeftY){
     Player *player = (Player *)malloc(sizeof(Player));
+
     player->spritesNormal = LoadTexture("data/sprites/player.png");
     player->spritesNormalInvincible = LoadTexture("data/sprites/player_inv.png");
+
+    player->spritesElec = LoadTexture("data/sprites/player_electric.png");
+    player->spritesElecInvincible = LoadTexture("data/sprites/player_electric_inv.png");
+
+    player->spritesEarth = LoadTexture("data/sprites/player_earth.png");
+    player->spritesEarthInvincible = LoadTexture("data/sprites/player_earth_inv.png");
+
+    player->spritesWater = LoadTexture("data/sprites/player_water.png");
+    player->spritesWaterInvincible = LoadTexture("data/sprites/player_water_inv.png");
 
     player->position = (Vector2){topLeftX, topLeftY};
     player->velocity = (Vector2){0.0, 0.0};
@@ -40,6 +50,8 @@ Player* LoadPlayer(float topLeftX, float topLeftY){
     player->spriteLeg = 0;
     player->spriteLegLast = 0;
     player->spriteWalk = 0;
+
+    player->element = EL_NORMAL;
 
     player->invSpriteCounter = 0;
     player->moveDelayTimer = 0.0;
@@ -57,6 +69,10 @@ Player* LoadPlayer(float topLeftX, float topLeftY){
     player->alive = 1;
     player->jumped = 0;
     player->onGround = 0;
+
+    player->elPower1 = 64;
+    player->elPower2 = 64;
+    player->elPower3 = 64;
 
     return player;
 }
@@ -77,14 +93,66 @@ void ProcessPlayer(Player *player, MapData *currentMap, Level *currentLevel, flo
     if (player->alive){
         if (IsKeyPressed(CONTROL_CANCEL)){
             if (player->shootTimer >= 0.02 && G_PlayerProjCount < 3){
-                G_PlayerProjCount++;
-                player->shootTimer = 0;
-                player->shootSprite = 2;
-                player->shootSpriteTimer = 0.0;
-                Vector2 pPos = player->facing == 0 ? (Vector2){player->position.x - 32, player->position.y + 3} : (Vector2){player->position.x + 40, player->position.y + 3};
-                Vector2 pVel = player->facing == 0 ? (Vector2){-1440.0, 0.0} : (Vector2){1440.0, 0.0};
+                Vector2 pPos;
+                Vector2 pVel;
+                switch(player->element){
+                    case EL_NORMAL:
+                        G_PlayerProjCount++;
+                        player->shootTimer = 0;
+                        player->shootSprite = 2;
+                        player->shootSpriteTimer = 0.0;
+                        pPos = player->facing == 0 ? (Vector2){player->position.x - 32, player->position.y + 3} : (Vector2){player->position.x + 40, player->position.y + 3};
+                        pVel = player->facing == 0 ? (Vector2){-1440.0, 0.0} : (Vector2){1440.0, 0.0};
 
-                AddProjectile(currentLevel, MakeProjectile(PROJ_PLAYER_NORMAL, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, player->facing));
+                        AddProjectile(currentLevel, MakeProjectile(PROJ_PLAYER_NORMAL, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, player->facing));
+                        break;
+                    case EL_ELECTRIC:
+                        if (player->elPower1 <= 0){
+                            break;
+                        }
+                        player->elPower1 -= 2;
+                        G_PlayerProjCount +=3;
+                        player->shootTimer = 0;
+                        player->shootSprite = 2;
+                        player->shootSpriteTimer = 0.0;
+                        pPos = player->facing == 0 ? (Vector2){player->position.x - 32, player->position.y + 3} : (Vector2){player->position.x + 40, player->position.y + 3};
+                        pVel = player->facing == 0 ? (Vector2){-1440.0, 0.0} : (Vector2){1440.0, 0.0};
+                        AddProjectile(currentLevel, MakeProjectile(PROJ_PLAYER_ELEC, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, player->facing));
+                        pVel = player->facing == 0 ? (Vector2){-1440.0, 600.0} : (Vector2){1440.0, 600.0};
+                        pVel = Vector2Multiply(pVel, Vector2Normalize((Vector2){1.0, 0.33}));
+                        AddProjectile(currentLevel, MakeProjectile(PROJ_PLAYER_ELEC, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, player->facing));
+                        pVel = player->facing == 0 ? (Vector2){-1440.0, 600.0} : (Vector2){1440.0, 600.0};
+                        pVel = Vector2Multiply(pVel, Vector2Normalize((Vector2){1.0, -0.33}));
+                        AddProjectile(currentLevel, MakeProjectile(PROJ_PLAYER_ELEC, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, player->facing));
+                        break;
+                    case EL_EARTH:
+                        if (player->elPower2 <= 0){
+                            break;
+                        }
+                        player->elPower2--;
+                        G_PlayerProjCount++;
+                        player->shootTimer = 0;
+                        player->shootSprite = 2;
+                        player->shootSpriteTimer = 0.0;
+                        pPos = player->facing == 0 ? (Vector2){player->position.x - 32, player->position.y + 3} : (Vector2){player->position.x + 40, player->position.y + 3};
+                        pVel = player->facing == 0 ? (Vector2){-2220.0, 0.0} : (Vector2){2220.0, 0.0};
+                        AddProjectile(currentLevel, MakeProjectile(PROJ_PLAYER_EARTH, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, player->facing));
+                        break;
+                    case EL_WATER:
+                        if (player->elPower3 <= 0){
+                            break;
+                        }
+                        player->elPower3 -= 2;
+                        G_PlayerProjCount++;
+                        player->shootTimer = 0;
+                        player->shootSprite = 2;
+                        player->shootSpriteTimer = 0.0;
+                        pPos = player->facing == 0 ? (Vector2){player->position.x - 32, player->position.y + 3} : (Vector2){player->position.x + 40, player->position.y + 3};
+                        pVel = player->facing == 0 ? (Vector2){-1880.0, 0.0} : (Vector2){1880.0, 0.0};
+                        AddProjectile(currentLevel, MakeProjectile(PROJ_PLAYER_WATER, pPos, pVel, (Vector2){48, 48}, (Vector2){22, 24}, player->facing));
+                        break;
+                }
+                
                 PlaySFX(SFX_ATTACK);
             }
         }
@@ -345,10 +413,36 @@ void DrawPlayer(Player *player){
         Rectangle drawRect = (Rectangle){player->spirteX * 72, player->spirteY * 72, 72, 72};
         // TraceLog(LOG_INFO, TextFormat("*%u", &player->spritesNormal));
         if (player->invincible && (int)(player->invincibilityTimer * 100000) % 2 == 0){
-            DrawTextureRec(player->spritesNormalInvincible, drawRect, player->position, WHITE);
+            switch(player->element){
+                case EL_NORMAL:
+                    DrawTextureRec(player->spritesNormalInvincible, drawRect, player->position, WHITE);
+                    break;
+                case EL_ELECTRIC:
+                    DrawTextureRec(player->spritesElecInvincible, drawRect, player->position, WHITE);
+                    break;
+                case EL_EARTH:
+                    DrawTextureRec(player->spritesEarthInvincible, drawRect, player->position, WHITE);
+                    break;
+                case EL_WATER:
+                    DrawTextureRec(player->spritesWaterInvincible, drawRect, player->position, WHITE);
+                    break;
+            }
             player->invSpriteCounter = 0;
         } else {
-            DrawTextureRec(player->spritesNormal, drawRect, player->position, WHITE);
+            switch(player->element){
+                case EL_NORMAL:
+                    DrawTextureRec(player->spritesNormal, drawRect, player->position, WHITE);
+                    break;
+                case EL_ELECTRIC:
+                    DrawTextureRec(player->spritesElec, drawRect, player->position, WHITE);
+                    break;
+                case EL_EARTH:
+                    DrawTextureRec(player->spritesEarth, drawRect, player->position, WHITE);
+                    break;
+                case EL_WATER:
+                    DrawTextureRec(player->spritesWater, drawRect, player->position, WHITE);
+                    break;
+            }
             player->invSpriteCounter++;
         }
         // DrawTextureV(player->spritesNormal, player->position, WHITE);
@@ -358,6 +452,12 @@ void DrawPlayer(Player *player){
 void UnloadPlayer(Player *player){
     UnloadTexture(player->spritesNormal);
     UnloadTexture(player->spritesNormalInvincible);
+    UnloadTexture(player->spritesElec);
+    UnloadTexture(player->spritesElecInvincible);
+    UnloadTexture(player->spritesEarth);
+    UnloadTexture(player->spritesEarthInvincible);
+    UnloadTexture(player->spritesWater);
+    UnloadTexture(player->spritesWaterInvincible);
     free(player);
     player = NULL;
     playerLevelPointer = NULL;

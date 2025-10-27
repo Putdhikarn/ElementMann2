@@ -11,7 +11,9 @@ typedef enum {
     GAME_STATE_LEVEL_SELECT,
     GAME_STATE_PASSWORD,
     GAME_STATE_LEVEL,
-    GAME_STATE_WIN
+    GAME_STATE_PAUSED,
+    GAME_STATE_WIN,
+    GAME_STATE_WIN_END
 } GAME_STATE;
 
 typedef struct {
@@ -26,19 +28,30 @@ typedef struct {
 } MapData;
 
 typedef enum {
+    EL_NORMAL,
+    EL_ELECTRIC,
+    EL_EARTH,
+    EL_WATER
+} Element;
+
+typedef enum {
     PROJ_PLAYER_NORMAL,
     PROJ_BOSS1,
     PROJ_BOSS1_2,
     PROJ_BOSS2,
     PROJ_BOSS3,
     PROJ_BOSS4,
-    PROJ_PDEAD
+    PROJ_PDEAD,
+    PROJ_PLAYER_ELEC,
+    PROJ_PLAYER_EARTH,
+    PROJ_PLAYER_WATER
 } PROJ_TYPE;
 
 typedef struct Projectile{
     char toBeUnload;
 
     PROJ_TYPE type;
+    Element element;
 
     Vector2 position;
     Vector2 velocity;
@@ -56,11 +69,21 @@ typedef struct Projectile{
     int iSpeical;
     double dSpecial;
 
+
 } Projectile;
 
 typedef struct {
     Texture spritesNormal;
     Texture spritesNormalInvincible;
+
+    Texture spritesElec;
+    Texture spritesElecInvincible;
+
+    Texture spritesEarth;
+    Texture spritesEarthInvincible;
+
+    Texture spritesWater;
+    Texture spritesWaterInvincible;
 
     Rectangle hitBox;
     Vector2 position;
@@ -77,6 +100,8 @@ typedef struct {
     int shootSprite;
     char invSpriteCounter;
 
+    Element element;
+
     float spriteTimer;
     int spriteLeg;
     int spriteLegLast;
@@ -90,6 +115,11 @@ typedef struct {
     int alive;
     int jumped;
     int onGround;
+
+    char elPower1;
+    char elPower2;
+    char elPower3;
+
 } Player;
 
 typedef enum {
@@ -155,5 +185,6 @@ typedef struct Level{
 extern int G_PlayerProjCount;
 extern GAME_STATE currentGameState;
 extern char levelBeat[4];
+extern char lastLevel;
 
 #endif
