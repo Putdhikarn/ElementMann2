@@ -14,6 +14,14 @@ Project นี้เป็นส่วนหนึ่งในรายวิช
 3. ตัวเกมที่ compiled แล้วจะอยู่ใน ./build/game.exe
 ## Library ที่ใช้
 - [Raylib](https://www.raylib.com/)
+## โปรแกรมภายนอกที่ใช้
+- [VSCode](https://code.visualstudio.com/)
+- [mingw-w64 GCC](https://www.mingw-w64.org/)
+- [GNUMake](https://www.gnu.org/software/make/)
+- [Audacity](https://www.audacityteam.org/)
+- [Tiled](https://www.mapeditor.org/)
+- [Beepbox](https://www.beepbox.co/)
+- [Aseprite](https://www.aseprite.org/)
 ## Website
 - [Project Website](https://putdhikarn.github.io/PhyCom-ElementMann2.github.io/)
 - [Project Website Github](https://github.com/Putdhikarn/PhyCom-ElementMann2.github.io)
