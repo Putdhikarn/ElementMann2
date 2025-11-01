@@ -383,7 +383,7 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
                     PlaySFX(SFX_ATTACK);
                     enemy->dSpecial = 0;
                     Vector2 pPos = enemy->facing == 0 ? (Vector2){enemy->position.x - 38, enemy->position.y + 32} : (Vector2){enemy->position.x + 46, enemy->position.y + 32};
-                    Vector2 pVel = enemy->facing == 0 ? (Vector2){-1330.0, 0.0} : (Vector2){1330.0, 0.0};
+                    Vector2 pVel = enemy->facing == 0 ? (Vector2){-1010.0, 0.0} : (Vector2){1010.0, 0.0};
                     AddProjectile(level, MakeProjectile(PROJ_BOSS1, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
                     enemy->iSpeical2++;
                     if (enemy->iSpeical2 >= 3){
@@ -425,17 +425,21 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
                 break;
             // shoot circle state
             case 3:
-                if (enemy->dSpecial >= 0.25){
-                    enemy->dSpecial = 0;
+                if (enemy->dSpecial >= 0.35 && enemy->dSpecial <= 0.36){
+                    enemy->dSpecial = 0.37;
                     for (int i = 0; i <= 180; i += 36){
                         PlaySFX(SFX_ATTACK);
                         Vector2 pDir = (Vector2){cos((double)i * (PI / 180.0)), sin((double)i * (PI / 180.0))};
                         Vector2 pPos = (Vector2){enemy->hitBox.x + enemy->hitBox.width / 2, enemy->hitBox.y + enemy->hitBox.height / 2};
-                        Vector2 pVel = (Vector2){1330.0, -1330.0};
+                        Vector2 pVel = (Vector2){1110.0, -1110.0};
                         pVel = Vector2Multiply(pVel, Vector2Normalize(pDir));
                         AddProjectile(level, MakeProjectile(PROJ_BOSS1_2, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
                         enemy->cSpecial = 0;
                     }
+                }  
+                if (enemy->dSpecial >= 1.15){
+                    enemy->cSpecial = 0;
+                    enemy->dSpecial = 0;
                 } else {
                     enemy->dSpecial += deltaTime;
                 }
@@ -470,6 +474,7 @@ void EP02(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 
     // reinit enemy for respawn
     else {
+        enemy->cSpecial = 0;
         enemy->iSpeical = enemy->respawnPosition.x > level->player->position.x;
         enemy->position = enemy->respawnPosition;
         enemy->velocity.x = 0;
@@ -568,12 +573,11 @@ void EP03(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
             // shoot circle state
             case 3:
                 if (enemy->dSpecial <= 0.0){
-                    enemy->dSpecial = 0;
                     PlaySFX(SFX_ATTACK);
                     for (int i = 0; i <= 180; i += 36){
                         Vector2 pDir = (Vector2){cos((double)i * (PI / 180.0)), sin((double)i * (PI / 180.0))};
                         Vector2 pPos = (Vector2){enemy->hitBox.x + enemy->hitBox.width / 2, enemy->hitBox.y + enemy->hitBox.height / 2};
-                        Vector2 pVel = (Vector2){1330.0, -1330.0};
+                        Vector2 pVel = (Vector2){888.0, -888.0};
                         pVel = Vector2Multiply(pVel, Vector2Normalize(pDir));
                         AddProjectile(level, MakeProjectile(PROJ_BOSS2, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
                     }
@@ -609,6 +613,7 @@ void EP03(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 
     // reinit enemy for respawn
     else {
+        enemy->cSpecial = 0;
         enemy->iSpeical = enemy->respawnPosition.x > level->player->position.x;
         enemy->position = enemy->respawnPosition;
         enemy->velocity.x = 0;
@@ -731,6 +736,7 @@ void EP04(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 
     // reinit enemy for respawn
     else {
+        enemy->cSpecial = 0;
         enemy->iSpeical = enemy->respawnPosition.x > level->player->position.x;
         enemy->position = enemy->respawnPosition;
         enemy->velocity.x = 0;
@@ -828,7 +834,7 @@ void EP05(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
                 for (int i = 0; i <= 360; i += 36){
                     Vector2 pDir = (Vector2){cos((double)i * (PI / 180.0)), sin((double)i * (PI / 180.0))};
                     Vector2 pPos = (Vector2){enemy->hitBox.x + enemy->hitBox.width / 2, enemy->hitBox.y + enemy->hitBox.height / 2};
-                    Vector2 pVel = (Vector2){880.0, -880.0};
+                    Vector2 pVel = (Vector2){700.0, -700.0};
                     pVel = Vector2Multiply(pVel, Vector2Normalize(pDir));
                     AddProjectile(level, MakeProjectile(PROJ_BOSS4, pPos, pVel, (Vector2){24, 24}, (Vector2){21, 24}, enemy->facing));
                 }
@@ -872,6 +878,7 @@ void EP05(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 
     // reinit enemy for respawn
     else {
+        enemy->cSpecial = 0;
         enemy->iSpeical = enemy->respawnPosition.x > level->player->position.x;
         enemy->position = enemy->respawnPosition;
         enemy->velocity.x = 0;
