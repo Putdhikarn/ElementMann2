@@ -2,6 +2,7 @@
 #define WIN_SCREEN_H
 
 #include "game_struct.h"
+#include "audio.h"
 #include "control.h"
 #include "game_def.h"
 #include "include/raylib.h"

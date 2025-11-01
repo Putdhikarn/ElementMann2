@@ -66,11 +66,23 @@ char ProcessLevelSelect(){
         // currentGameState = GAME_STATE_LEVEL;
         if (selectCursorY == 1 && levelBeat[0] && levelBeat[1] && levelBeat[2]){
             selectedLevel = 4;
+            PlayBGM(BGM_BOSS4);
             return 1;
         } else if (selectCursorY == 0){
             if (!levelBeat[selectCursorX]){
                 selectedLevel = selectCursorX + 1;
                 PlaySFX(SFX_CURSOR);
+                switch(selectCursorX){
+                    case 0:
+                        PlayBGM(BGM_BOSS1);
+                        break;
+                    case 1:
+                        PlayBGM(BGM_BOSS2);
+                        break;
+                    case 2:
+                        PlayBGM(BGM_BOSS3);
+                        break;
+                }
                 return 1;
             }
             return 0;

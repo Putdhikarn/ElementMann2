@@ -43,6 +43,41 @@ void PlayBGM(GAME_SOUND bgm){
             bgmStream = LoadMusicStream("data/audio/bgm_main.ogg");
             PlayMusicStream(bgmStream);
             break;
+        case BGM_PASSWORD:
+            StopBGM();
+            bgmStream = LoadMusicStream("data/audio/bgm_password.ogg");
+            PlayMusicStream(bgmStream);
+            break;
+        case BGM_SELECT:
+            StopBGM();
+            bgmStream = LoadMusicStream("data/audio/bgm_select.ogg");
+            PlayMusicStream(bgmStream);
+            break;
+        case BGM_BOSS1:
+            StopBGM();
+            bgmStream = LoadMusicStream("data/audio/bgm_boss.ogg");
+            PlayMusicStream(bgmStream);
+            break;
+        case BGM_BOSS2:
+            StopBGM();
+            bgmStream = LoadMusicStream("data/audio/bgm_boss.ogg");
+            PlayMusicStream(bgmStream);
+            break;
+        case BGM_BOSS3:
+            StopBGM();
+            bgmStream = LoadMusicStream("data/audio/bgm_boss.ogg");
+            PlayMusicStream(bgmStream);
+            break;
+        case BGM_BOSS4:
+            StopBGM();
+            bgmStream = LoadMusicStream("data/audio/bgm_boss4.ogg");
+            PlayMusicStream(bgmStream);
+            break;
+        case BGM_WIN:
+            StopBGM();
+            bgmStream = LoadMusicStream("data/audio/bgm_win.ogg");
+            PlayMusicStream(bgmStream);
+            break;
     }
 }
 

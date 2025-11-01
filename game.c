@@ -133,7 +133,7 @@ void GameLoop(){
     switch (currentGameState)
     {
         case GAME_STATE_MAIN_MENU:
-            ProcessMainMenu();
+            ProcessMainMenu(deltaTime);
             break;
         case GAME_STATE_LEVEL_SELECT:
             if(ProcessLevelSelect()){

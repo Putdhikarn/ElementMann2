@@ -18,6 +18,7 @@ void LoadWinScreen() {
 void ProcessWinScreen(double delta) {
     if (IsKeyPressed(CONTROL_CANCEL)) {
         currentGameState = GAME_STATE_LEVEL_SELECT;
+        PlayBGM(BGM_SELECT);
     }
     if (winScreen.spriteAnimTimer >= 0.14){
         winScreen.spriteAnimTimer = 0;

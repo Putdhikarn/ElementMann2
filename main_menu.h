@@ -8,7 +8,7 @@
 
 void LoadMainMenu();
 void UnloadMainMenu();
-void ProcessMainMenu();
+void ProcessMainMenu(double delta);
 void DrawMainMeun();
 
 #endif
