@@ -19,6 +19,9 @@ Level *currentLevel = NULL;
 
 // Init the Game
 void GameInit(){
+    scrollTexture = LoadTexture("data/sprites/scroll_bg.png");
+    bgSolid = LoadTexture("data/sprites/bg_solid.png");
+
     LoadAudio();
     LoadMainMenu();
     LoadLevelSelect();
@@ -36,6 +39,7 @@ void GameInit(){
     LoadEnemyTextures();
 
     playerHpBar = LoadTexture("data/sprites/normal_bar.png");
+    
 
     // currentLevel = LoadLevel();
 
@@ -100,25 +104,25 @@ void InitSelectedLevel(char selected){
         currentMap = LoadMapDataFromFile("data/mapdata/map2.emp");
         SetMapTileSet("data/tilesets/map1.png", currentMap, 48);
 
-        AddEnemy(currentLevel, MakeEnemy(EN_BOSS1, (Vector2){38 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
+        AddEnemy(currentLevel, MakeEnemy(EN_BOSS1, (Vector2){35 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
         break;
     case 2:
         currentMap = LoadMapDataFromFile("data/mapdata/map2.emp");
-        SetMapTileSet("data/tilesets/map1.png", currentMap, 48);
+        SetMapTileSet("data/tilesets/map2.png", currentMap, 48);
 
-        AddEnemy(currentLevel, MakeEnemy(EN_BOSS2, (Vector2){38 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
+        AddEnemy(currentLevel, MakeEnemy(EN_BOSS2, (Vector2){35 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
         break;
     case 3:
         currentMap = LoadMapDataFromFile("data/mapdata/map2.emp");
-        SetMapTileSet("data/tilesets/map1.png", currentMap, 48);
+        SetMapTileSet("data/tilesets/map3.png", currentMap, 48);
 
-        AddEnemy(currentLevel, MakeEnemy(EN_BOSS3, (Vector2){38 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
+        AddEnemy(currentLevel, MakeEnemy(EN_BOSS3, (Vector2){35 * GAME_TILE_SIZE, 37 * GAME_TILE_SIZE}));
         break;
     case 4:
         currentMap = LoadMapDataFromFile("data/mapdata/map2.emp");
-        SetMapTileSet("data/tilesets/map1.png", currentMap, 48);
+        SetMapTileSet("data/tilesets/map4.png", currentMap, 48);
 
-        AddEnemy(currentLevel, MakeEnemy(EN_BOSS4, (Vector2){36 * GAME_TILE_SIZE, 36 * GAME_TILE_SIZE}));
+        AddEnemy(currentLevel, MakeEnemy(EN_BOSS4, (Vector2){35 * GAME_TILE_SIZE, 36 * GAME_TILE_SIZE}));
         break;
     }
 
@@ -136,12 +140,12 @@ void GameLoop(){
             ProcessMainMenu(deltaTime);
             break;
         case GAME_STATE_LEVEL_SELECT:
-            if(ProcessLevelSelect()){
+            if(ProcessLevelSelect(deltaTime)){
                 InitSelectedLevel(selectedLevel);
             }
             break;
         case GAME_STATE_PASSWORD:
-            ProcessPasswordSelect();
+            ProcessPasswordSelect(deltaTime);
             break;
         case GAME_STATE_LEVEL:
             // Unload Stuff that needs to be unloaded Down Here...
@@ -243,6 +247,8 @@ void GameLoop(){
 
 // Clean Up All the Used Memory
 void GameCleanUp(){
+    UnloadTexture(scrollTexture);
+    UnloadTexture(bgSolid);
     UnloadMainMenu();
     UnloadLevelSelect();
     

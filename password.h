@@ -10,7 +10,7 @@ extern char selectedLevel;
 
 void LoadPasswordSelect();
 void UnloadPasswordSelect();
-void ProcessPasswordSelect();
+void ProcessPasswordSelect(double delta);
 void DrawPasswordSelect();
 
 #endif

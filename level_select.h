@@ -10,7 +10,7 @@ extern char selectedLevel;
 
 void LoadLevelSelect();
 void UnloadLevelSelect();
-char ProcessLevelSelect();
+char ProcessLevelSelect(double delta);
 void DrawLevelSelect();
 
 #endif

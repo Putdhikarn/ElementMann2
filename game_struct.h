@@ -187,4 +187,9 @@ extern GAME_STATE currentGameState;
 extern char levelBeat[4];
 extern char lastLevel;
 
+extern Texture2D scrollTexture;
+extern Texture2D bgSolid;
+
+extern char scrollFrame;
+extern double scrollTime;
 #endif

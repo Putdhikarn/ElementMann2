@@ -45,7 +45,19 @@ void UnloadLevelSelect(){
     UnloadTexture(levelIcon4G);
 }
 
-char ProcessLevelSelect(){
+char ProcessLevelSelect(double delta){
+    // bg scroll
+    if (scrollTime >= 1.0/120.0){
+        scrollTime = 0;
+        if (scrollFrame >= 16){
+            scrollFrame = 0;
+        } else {
+            scrollFrame ++;
+        }
+    } else {
+        scrollTime += delta;
+    }
+
     if (IsKeyPressed(CONTROL_UP)){
         selectCursorY = 1;
         PlaySFX(SFX_CURSOR);
@@ -95,6 +107,22 @@ char ProcessLevelSelect(){
 }
 
 void DrawLevelSelect(){
+    if (selectCursorY == 1){
+        ClearBackground(COLOR_LEVEL_4);
+    } else {
+        switch(selectCursorX){
+            case 0:
+                ClearBackground(COLOR_LEVEL_1);
+                break;
+            case 1:
+                ClearBackground(COLOR_LEVEL_2);
+                break;
+            case 2:
+                ClearBackground(COLOR_LEVEL_3);
+                break;
+        }
+    }
+    DrawTextureRec(scrollTexture, (Rectangle){1152 * scrollFrame, 0, 1152, 762},(Vector2){0, 0}, WHITE);
     DrawTexture(levelSelectText, 7 * GAME_TILE_SIZE, GAME_TILE_SIZE, WHITE);
     if (levelBeat[0]){
         DrawTexture(levelIcon1G, 5 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);

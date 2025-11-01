@@ -742,7 +742,7 @@ void EP04(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
 }
 
 void EP05(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
-    // change game state to win if boos is dead
+    // change game state to win if boss is dead
     if (enemy->dead == 1 && enemy->type == EN_BOSS4) {
         if (!levelBeat[3]){
             levelBeat[3] = 1;
@@ -785,11 +785,11 @@ void EP05(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
             // walking state
             case 0:
 
-                if (enemy->dSpecial >= 0.65 && (float)enemy->hp / (float)enemy->respawnHp < 0.55){
+                if (enemy->dSpecial >= 0.65 && (float)enemy->hp / (float)enemy->respawnHp < 0.55 && enemy->position.y <= 31 * GAME_TILE_SIZE){
                     enemy->cSpecial = 1;    // set to charge up state
                     enemy->dSpecial = 0;
                     enemy->spriteX = 0;
-                } else if (enemy->dSpecial >= 1.25){
+                } else if (enemy->dSpecial >= 1.25 && enemy->position.y <= 31 * GAME_TILE_SIZE){
                     enemy->cSpecial = 1;
                     enemy->dSpecial = 0;
                     enemy->spriteX = 0;
