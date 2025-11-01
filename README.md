@@ -28,6 +28,7 @@ Project นี้เป็นส่วนหนึ่งในรายวิช
 - [Element Mann1](https://drive.google.com/file/d/1w-kb3iIiLoURTrlO7yjTNdZpfDmk_yDV/view?usp=sharing)
 - [Element Mann1 Src](https://drive.google.com/file/d/1vzjNWwokbudhxGu5FML3rgsksWfIgzc7/view?usp=sharing)
 ## Poster
+![](/poster/poster.png)
 ## Video
 ## สมาชิกในกลุ่ม
 | GithubUserName | Name | Id |
