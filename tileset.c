@@ -4,10 +4,11 @@
 TileSet* LoadTileSetFromImage(const char *fileName, int tileSize){
     TileSet* tileSet = malloc(sizeof(TileSet));
     // load the source image.
-    tileSet->texture = LoadTexture(fileName); // โหลดภาพใหญ่เพียงครั้งเดียว
+    tileSet->texture = LoadTexture(fileName); // load the entire image.
     tileSet->tileSize = tileSize;
     return tileSet;
 }
+
 void DrawTileFromSet(TileSet *tileSet, int tileIndex, int x, int y){
     if (!tileSet) return;
     if (TILE_ID_BASE == 1 && tileIndex <= 0) return;

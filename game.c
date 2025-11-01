@@ -19,6 +19,8 @@ Level *currentLevel = NULL;
 
 // Init the Game
 void GameInit(){
+    SetExitKey(KEY_NULL);
+
     scrollTexture = LoadTexture("data/sprites/scroll_bg.png");
     bgSolid = LoadTexture("data/sprites/bg_solid.png");
 
@@ -28,7 +30,10 @@ void GameInit(){
     LoadWinScreen();
     LoadPasswordSelect();
     LoadPauseMenu();
-    SetRandomSeed(451);
+    LoadEndScreen();
+
+    SetRandomSeed(451); // Yes, this is intentional...
+
     // G_PlayerProjCount = 0;
     // player = LoadPlayer(17 * GAME_TILE_SIZE, 12 * GAME_TILE_SIZE);
 
@@ -171,6 +176,9 @@ void GameLoop(){
         case GAME_STATE_WIN:
             ProcessWinScreen(deltaTime);
             break;
+        case GAME_STATE_WIN_END:
+            ProcessEndScreen(deltaTime);
+            break;
 
     }
     
@@ -190,17 +198,6 @@ void GameLoop(){
             break;
         case GAME_STATE_LEVEL:
             BeginMode2D(currentLevel->camera->camera);
-            // Draw Map
-            // for (int i = (((int)currentLevel->camera->camera.target.y - (int)currentLevel->camera->camera.offset.y) / GAME_TILE_SIZE); i < ((int)currentLevel->camera->camera.target.y + (int)currentLevel->camera->camera.offset.y) / 48 + 1; i++){
-            //     for (int j = (((int)currentLevel->camera->camera.target.x - (int)currentLevel->camera->camera.offset.x) / GAME_TILE_SIZE); j < ((int)currentLevel->camera->camera.target.x + (int)currentLevel->camera->camera.offset.x) / 48 + 1; j++){
-            //         if (i < currentMap->height && i >= 0 && j < currentMap->width && j >= 0){
-            //             int offset = i * currentMap->width + j;
-            //             if (currentMap->mapData[offset] > 0){
-            //                 DrawTexture(*(currentMap->tileSet->tileTextures + currentMap->mapData[offset]), j * 48, i * 48, WHITE);
-            //             }
-            //         }
-            //     }
-            // }
             DrawMap(currentMap);
             DrawPlayer(player);
             DrawLevelEnemy(currentLevel);
@@ -234,10 +231,13 @@ void GameLoop(){
             // Draw Screenspace Stuff (UI)
             DrawTextureRec(playerHpBar, (Rectangle){0, 0, player->hp * 18, 48}, (Vector2){GAME_TILE_SIZE, GAME_TILE_SIZE}, WHITE);
             // Pause menu sit of top of everything else
-            DrawPauseMenu();
+            DrawPauseMenu(player);
             break;
         case GAME_STATE_WIN:
             DrawWinScreen();
+            break;
+        case GAME_STATE_WIN_END:
+            DrawEndScreen();
             break;
     }
     // Draw Worldspace Stuff
@@ -267,5 +267,6 @@ void GameCleanUp(){
     UnloadWinScreen();
     UnloadPasswordSelect();
     UnloadPauseMenu();
+    UnloadEndScreen();
     // UnloadMapData(currentMap);
 }

@@ -78,6 +78,11 @@ void PlayBGM(GAME_SOUND bgm){
             bgmStream = LoadMusicStream("data/audio/bgm_win.ogg");
             PlayMusicStream(bgmStream);
             break;
+        case BGM_END:
+            StopBGM();
+            bgmStream = LoadMusicStream("data/audio/bgm_end.ogg");
+            PlayMusicStream(bgmStream);
+            break;
     }
 }
 

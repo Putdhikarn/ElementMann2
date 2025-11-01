@@ -105,7 +105,7 @@ void ProcessPauseMeun(Player* player){
     }
 }
 
-void DrawPauseMenu(){
+void DrawPauseMenu(Player* player){
     DrawTexture(pausePanel, 16 * GAME_TILE_SIZE, 1 * GAME_TILE_SIZE, WHITE);
 
     DrawTexture(element1, 17 * GAME_TILE_SIZE, 2 * GAME_TILE_SIZE, WHITE);
@@ -125,19 +125,19 @@ void DrawPauseMenu(){
         DrawTexture(element4G, 17 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
     }
 
-    DrawTexture(elementBar1, 19 * GAME_TILE_SIZE, 2 * GAME_TILE_SIZE, WHITE);
+    DrawTextureRec(elementBar1, (Rectangle){0, 0, player->hp * 18, 48}, (Vector2){19 * GAME_TILE_SIZE, 2 * GAME_TILE_SIZE}, WHITE);
     if (levelBeat[0]){
-        DrawTexture(elementBar2, 19 * GAME_TILE_SIZE, 4 * GAME_TILE_SIZE, WHITE);
+        DrawTextureRec(elementBar2, (Rectangle){0, 0, (player->elPower1 / 8) * 18, 48}, (Vector2){19 * GAME_TILE_SIZE, 4 * GAME_TILE_SIZE}, WHITE);
     } else {
         DrawTexture(elementBarG, 19 * GAME_TILE_SIZE, 4 * GAME_TILE_SIZE, WHITE);
     }
     if (levelBeat[1]){
-        DrawTexture(elementBar3, 19 * GAME_TILE_SIZE, 6 * GAME_TILE_SIZE, WHITE);
+        DrawTextureRec(elementBar3, (Rectangle){0, 0, (player->elPower2 / 8) * 18, 48}, (Vector2){19 * GAME_TILE_SIZE, 6 * GAME_TILE_SIZE}, WHITE);
     } else {
         DrawTexture(elementBarG, 19 * GAME_TILE_SIZE, 6 * GAME_TILE_SIZE, WHITE);
     }
     if (levelBeat[2]){
-        DrawTexture(elementBar4, 19 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
+        DrawTextureRec(elementBar4, (Rectangle){0, 0, (player->elPower3 / 8) * 18, 48}, (Vector2){19 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE}, WHITE);
     } else {
         DrawTexture(elementBarG, 19 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);
     }

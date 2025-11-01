@@ -9,7 +9,6 @@ int main() {
     InitAudioDevice();
 
     SetTargetFPS(GetMonitorRefreshRate(0));
-    // SetTargetFPS(60);
 
     GameInit();
 

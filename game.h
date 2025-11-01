@@ -16,6 +16,7 @@
 #include "win_screen.h"
 #include "password.h"
 #include "pause_menu.h"
+#include "end_screen.h"
 #include <stdio.h>
 
 #define PIXEL_SCALE_FACTOR 3.0

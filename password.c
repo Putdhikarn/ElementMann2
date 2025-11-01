@@ -103,6 +103,7 @@ void ProcessPasswordSelect(double delta){
             }
             currentGameState = GAME_STATE_LEVEL_SELECT;
             PlaySFX(SFX_CURSOR);
+            PlayBGM(BGM_SELECT);
         }
     } else if (IsKeyPressed(CONTROL_PAUSE)){
         currentGameState = GAME_STATE_MAIN_MENU;

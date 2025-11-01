@@ -58,8 +58,8 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->hitBoxOffset = (Vector2){27, 21};
             temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
             temp->spriteSize = 96;
-            // temp->hp = 24;
-            temp->hp = 1;
+            temp->hp = 24;
+            // temp->hp = 1;
             temp->respawnHp = temp->hp;
             temp->cSpecial = 0;
             temp->iSpeical = 1;
@@ -70,8 +70,8 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->hitBoxOffset = (Vector2){27, 21};
             temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
             temp->spriteSize = 96;
-            // temp->hp = 24;
-            temp->hp = 1;
+            temp->hp = 24;
+            // temp->hp = 1;
             temp->respawnHp = temp->hp;
             temp->cSpecial = 0;
             temp->iSpeical = 1;
@@ -82,8 +82,8 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->hitBoxOffset = (Vector2){27, 21};
             temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
             temp->spriteSize = 96;
-            // temp->hp = 24;
-            temp->hp = 1;
+            temp->hp = 24;
+            // temp->hp = 1;
             temp->respawnHp = temp->hp;
             temp->cSpecial = 0;
             temp->iSpeical = 1;
@@ -94,8 +94,8 @@ Enemy* MakeEnemy(ENEMY_TYPE type, Vector2 pos){
             temp->hitBoxOffset = (Vector2){27, 21};
             temp->hitBox = (Rectangle){temp->position.x + temp->hitBoxOffset.x, temp->position.y + temp->hitBoxOffset.y, 48, 72};
             temp->spriteSize = 96;
-            // temp->hp = 56;
-            temp->hp = 1;
+            temp->hp = 56;
+            // temp->hp = 1;
             temp->respawnHp = temp->hp;
             temp->cSpecial = 0;
             temp->iSpeical = 1;
@@ -166,13 +166,13 @@ void DoEnemyHit(Enemy *enemy, Vector2 hitPos, Element elementType){
         enemy->invTimer = 0.0;
         
         if (enemy->type == EN_BOSS1 && elementType == EL_EARTH){
-            enemy->hp -= 2;
-        } else if (enemy->type == EN_BOSS2 && elementType == EL_WATER){
             enemy->hp -= 4;
+        } else if (enemy->type == EN_BOSS2 && elementType == EL_WATER){
+            enemy->hp -= 2;
         } else if (enemy->type == EN_BOSS3 && elementType == EL_ELECTRIC){
             enemy->hp -= 2;
         } else if (enemy->type == EN_BOSS4 && elementType != EL_NORMAL){
-            enemy->hp -= 2;
+            enemy->hp -= 3;
         } else {
             enemy->hp--;
         }
@@ -764,8 +764,8 @@ void EP05(Enemy *enemy, MapData *currentMap, Level *level, float deltaTime){
             enemy->dSpecial += deltaTime;
             return;
         }
-        currentGameState = GAME_STATE_WIN;
-        PlayBGM(BGM_WIN);
+        currentGameState = GAME_STATE_WIN_END;
+        PlayBGM(BGM_END);
         return;
     }
     // invincibility check

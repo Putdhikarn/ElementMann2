@@ -11,7 +11,7 @@ void LoadPauseMenu();
 void UnloadPauseMenu();
 
 void ProcessPauseMeun(Player* player);
-void DrawPauseMenu();
+void DrawPauseMenu(Player* player);
 
 extern Texture elementBar2;
 extern Texture elementBar3;
