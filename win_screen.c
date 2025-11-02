@@ -19,7 +19,7 @@ void ProcessWinScreen(double delta) {
     // bg scroll
     if (scrollTime >= 1.0/120.0){
         scrollTime = 0;
-        if (scrollFrame >= 16){
+        if (scrollFrame >= 15){
             scrollFrame = 0;
         } else {
             scrollFrame ++;
@@ -52,7 +52,7 @@ void DrawWinScreen() {
     } else if (lastLevel == 2){
         ClearBackground(COLOR_LEVEL_3);
     }
-    DrawTextureRec(scrollTexture, (Rectangle){1152 * scrollFrame, 0, 1152, 672},(Vector2){0, 0}, WHITE);
+    DrawTexture(scrollTexture[scrollFrame], 0, 0, WHITE);
     DrawTexture(winScreen.panel, 0 * GAME_TILE_SIZE, 0 * GAME_TILE_SIZE, WHITE);
     if (levelBeat[0]){
         DrawTexture(winScreen.passwordDot, (15 + 0) * GAME_TILE_SIZE, (5 + 4) * GAME_TILE_SIZE, WHITE);

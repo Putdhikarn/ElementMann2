@@ -21,7 +21,23 @@ Level *currentLevel = NULL;
 void GameInit(){
     SetExitKey(KEY_NULL);
 
-    scrollTexture = LoadTexture("data/sprites/scroll_bg.png");
+    scrollTexture[0] = LoadTexture("data/sprites/scroll_bg/scroll_bg1.png");
+    scrollTexture[1] = LoadTexture("data/sprites/scroll_bg/scroll_bg2.png");
+    scrollTexture[2] = LoadTexture("data/sprites/scroll_bg/scroll_bg3.png");
+    scrollTexture[3] = LoadTexture("data/sprites/scroll_bg/scroll_bg4.png");
+    scrollTexture[4] = LoadTexture("data/sprites/scroll_bg/scroll_bg5.png");
+    scrollTexture[5] = LoadTexture("data/sprites/scroll_bg/scroll_bg6.png");
+    scrollTexture[6] = LoadTexture("data/sprites/scroll_bg/scroll_bg7.png");
+    scrollTexture[7] = LoadTexture("data/sprites/scroll_bg/scroll_bg8.png");
+    scrollTexture[8] = LoadTexture("data/sprites/scroll_bg/scroll_bg9.png");
+    scrollTexture[9] = LoadTexture("data/sprites/scroll_bg/scroll_bg10.png");
+    scrollTexture[10] = LoadTexture("data/sprites/scroll_bg/scroll_bg11.png");
+    scrollTexture[11] = LoadTexture("data/sprites/scroll_bg/scroll_bg12.png");
+    scrollTexture[12] = LoadTexture("data/sprites/scroll_bg/scroll_bg13.png");
+    scrollTexture[13] = LoadTexture("data/sprites/scroll_bg/scroll_bg14.png");
+    scrollTexture[14] = LoadTexture("data/sprites/scroll_bg/scroll_bg15.png");
+    scrollTexture[15] = LoadTexture("data/sprites/scroll_bg/scroll_bg16.png");
+
     bgSolid = LoadTexture("data/sprites/bg_solid.png");
 
     LoadAudio();
@@ -247,7 +263,23 @@ void GameLoop(){
 
 // Clean Up All the Used Memory
 void GameCleanUp(){
-    UnloadTexture(scrollTexture);
+    UnloadTexture(scrollTexture[0]);
+    UnloadTexture(scrollTexture[1]);
+    UnloadTexture(scrollTexture[2]);
+    UnloadTexture(scrollTexture[3]);
+    UnloadTexture(scrollTexture[4]);
+    UnloadTexture(scrollTexture[5]);
+    UnloadTexture(scrollTexture[6]);
+    UnloadTexture(scrollTexture[7]);
+    UnloadTexture(scrollTexture[8]);
+    UnloadTexture(scrollTexture[9]);
+    UnloadTexture(scrollTexture[10]);
+    UnloadTexture(scrollTexture[11]);
+    UnloadTexture(scrollTexture[12]);
+    UnloadTexture(scrollTexture[13]);
+    UnloadTexture(scrollTexture[14]);
+    UnloadTexture(scrollTexture[15]);
+
     UnloadTexture(bgSolid);
     UnloadMainMenu();
     UnloadLevelSelect();
