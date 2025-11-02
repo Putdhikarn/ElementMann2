@@ -122,7 +122,7 @@ void DrawLevelSelect(){
                 break;
         }
     }
-    DrawTextureRec(scrollTexture, (Rectangle){1152 * scrollFrame, 0, 1152, 762},(Vector2){0, 0}, WHITE);
+    DrawTextureRec(scrollTexture, (Rectangle){1152 * scrollFrame, 0, 1152, 672},(Vector2){0, 0}, WHITE);
     DrawTexture(levelSelectText, 7 * GAME_TILE_SIZE, GAME_TILE_SIZE, WHITE);
     if (levelBeat[0]){
         DrawTexture(levelIcon1G, 5 * GAME_TILE_SIZE, 8 * GAME_TILE_SIZE, WHITE);

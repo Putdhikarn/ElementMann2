@@ -121,7 +121,7 @@ void DrawPasswordSelect(){
     if (passwordField[3][4] && passwordField[2][2]){
         DrawTexture(bgSolid, 768, 0, COLOR_LEVEL_3);
     }
-    DrawTextureRec(scrollTexture, (Rectangle){1152 * scrollFrame, 0, 1152, 762},(Vector2){0, 0}, WHITE);
+    DrawTextureRec(scrollTexture, (Rectangle){1152 * scrollFrame, 0, 1152, 672},(Vector2){0, 0}, WHITE);
     DrawTexture(panel, 0, 0, WHITE);
     DrawTexture(passwrodCursor, (8 + passwordCursorX) * GAME_TILE_SIZE, (5 + passwordCursorY) * GAME_TILE_SIZE, WHITE);
     DrawTextureRec(numText, (Rectangle){passwordDotLeft * GAME_TILE_SIZE, 0, GAME_TILE_SIZE, GAME_TILE_SIZE}, (Vector2){17 * GAME_TILE_SIZE, 4 * GAME_TILE_SIZE}, WHITE);
